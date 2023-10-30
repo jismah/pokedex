@@ -67,7 +67,7 @@ class _HomePageContentState extends State<HomePageContent> {
             decoration: InputDecoration(
               prefixIcon: const Icon(Icons.search, size: 30.0),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(30.0),
+                borderRadius: BorderRadius.circular(15.0),
               ),
               hintText: 'Buscar...',
             ),
