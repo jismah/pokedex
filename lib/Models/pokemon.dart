@@ -13,6 +13,8 @@ class Pokemon extends PokemonService {
   final String name;
   final String url;
   late String urlimage;
+  late Map<String, int> stats;
+  late Map<int, String> types;
 
   Pokemon({required this.name, required this.url});
 
