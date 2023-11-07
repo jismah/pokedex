@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pokedex/UI/home.dart';
 import 'package:pokedex/UI/pokemon_favorites.dart';
-import 'package:pokedex/UI/pokemon_view.dart';
 
 void main() {
   runApp(const MainApp());
@@ -18,7 +17,6 @@ class MainApp extends StatelessWidget {
       initialRoute: '/',
       routes: <String, WidgetBuilder>{
         '/': (BuildContext context) => const HomePage(),
-        'pokemonView': (BuildContext context) => const PokemonView(),
         'favorites': (BuildContext context) => const PokemonFavorites(),
       },
     );

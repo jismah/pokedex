@@ -1,22 +1,9 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:pokedex/Models/pokemon_simple.dart';
-import 'package:http/http.dart' as http;
-import 'dart:async';
-import 'dart:convert';
-
-// FUNCION PARA HACER EL FETCH AL ENDPOINT DE LOS POSTS
-Future<List<PokemonSimple>> getPokemons() async {
-  final response =
-      await http.get(Uri.parse('https://pokeapi.co/api/v2/pokemon/'));
-
-  if (response.statusCode == 200) {
-    final List body = json.decode(response.body);
-    return body.map((e) => PokemonSimple.fromJson(e)).toList();
-  } else {
-    throw Exception('Failed to load Pokemons');
-  }
-}
+import 'package:pokedex/Models/pokemon.dart';
+import 'package:pokedex/UI/pokemon_view.dart';
+import 'package:pokedex/Utils/pokemon-services.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -34,11 +21,14 @@ class HomePage extends StatelessWidget {
       ),
       body: const HomePageContent(),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.red,
+        backgroundColor: Colors.red.shade900,
         onPressed: () {
           Navigator.pushNamed(context, 'favorites');
         },
-        child: const Icon(Icons.favorite),
+        child: const Icon(
+          Icons.favorite,
+          color: Colors.white,
+        ),
       ),
     );
   }
@@ -52,9 +42,38 @@ class HomePageContent extends StatefulWidget {
 }
 
 class _HomePageContentState extends State<HomePageContent> {
+  TextEditingController searchController = TextEditingController();
+
+  PokemonService pokemonService = PokemonService();
+  List<Pokemon> pokemonListAll = [];
+  List<Pokemon> pokemonListFiltered = [];
+
   @override
   void initState() {
+    _fetchPokemons();
     super.initState();
+  }
+
+  Future<void> _fetchPokemons() async {
+    try {
+      pokemonListAll = await pokemonService.fetchPokemonList();
+      setState(() {
+        // Actualiza el estado con la lista de Pokémon obtenida
+        pokemonListAll = pokemonListAll;
+        pokemonListFiltered = pokemonListAll;
+      });
+    } catch (e) {
+      print('Error al obtener la lista de Pokémon: $e');
+    }
+  }
+
+  void filterSearchResults(String query) {
+    setState(() {
+      pokemonListFiltered = pokemonListAll
+          .where(
+              (item) => item.name.toLowerCase().contains(query.toLowerCase()))
+          .toList();
+    });
   }
 
   @override
@@ -62,82 +81,146 @@ class _HomePageContentState extends State<HomePageContent> {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
           child: TextField(
+            onChanged: (value) {
+              filterSearchResults(value);
+            },
+            controller: searchController,
             decoration: InputDecoration(
-              prefixIcon: const Icon(Icons.search, size: 30.0),
+              enabledBorder: OutlineInputBorder(
+                borderSide: const BorderSide(color: Colors.black38, width: 1.5),
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              contentPadding: const EdgeInsets.symmetric(vertical: 15),
+              prefixIcon: const Icon(
+                Icons.search,
+                size: 30.0,
+              ),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(15.0),
+                borderRadius: BorderRadius.circular(10.0),
               ),
               hintText: 'Buscar...',
             ),
           ),
         ),
         Expanded(
-            child: GridView.count(
-                crossAxisCount: 2,
-                children: List.generate(
-                  10,
-                  (index) {
-                    return GestureDetector(
-                      onLongPress: () {
-                        showCupertinoModalPopup(
-                            context: context,
-                            builder: (BuildContext context) =>
-                                CupertinoActionSheet(
-                                  title: const Text("Opciones"),
-                                  actions: [
-                                    CupertinoActionSheetAction(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+            child: GridView.builder(
+                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                    maxCrossAxisExtent: 200,
+                    childAspectRatio: 3 / 4,
+                    crossAxisSpacing: 2,
+                    mainAxisSpacing: 5),
+                itemCount: pokemonListFiltered.length,
+                itemBuilder: (BuildContext ctx, index) {
+                  final Pokemon pokemon = pokemonListFiltered[index];
+
+                  return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: GestureDetector(
+                        onLongPress: () {
+                          showCupertinoModalPopup(
+                              context: context,
+                              builder: (BuildContext context) =>
+                                  CupertinoActionSheet(
+                                    title: const Text("Opciones"),
+                                    actions: [
+                                      CupertinoActionSheetAction(
+                                          onPressed: () {
+                                            Navigator.pop(context, 'Fav');
+                                          },
+                                          child: const Text(
+                                              "Agregar a Favoritos ❤️")),
+                                      CupertinoActionSheetAction(
+                                          onPressed: () {
+                                            Navigator.pop(context, 'See');
+                                          },
+                                          child: const Text("Ver Pokemón 👁️")),
+                                    ],
+                                    cancelButton: CupertinoActionSheetAction(
+                                        isDefaultAction: true,
                                         onPressed: () {
-                                          Navigator.pop(context, 'Fav');
+                                          Navigator.pop(context, 'Cancelar');
                                         },
-                                        child: const Text(
-                                            "Agregar a Favoritos ❤️")),
-                                    CupertinoActionSheetAction(
-                                        onPressed: () {
-                                          Navigator.pop(context, 'See');
-                                        },
-                                        child: const Text("Ver Pokemón 👁️")),
-                                  ],
-                                  cancelButton: CupertinoActionSheetAction(
-                                      isDefaultAction: true,
-                                      onPressed: () {
-                                        Navigator.pop(context, 'Cancelar');
-                                      },
-                                      child: const Text('Cancelar')),
-                                ));
-                      },
-                      onTap: () {
-                        Navigator.pushNamed(context, 'pokemonView');
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 12, horizontal: 24),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(20),
-                          boxShadow: [
-                            BoxShadow(
-                                color: Colors.grey.withOpacity(0.2),
-                                spreadRadius: 2,
-                                blurRadius: 2,
-                                offset: const Offset(0, 1)),
-                          ],
-                        ),
-                        margin: const EdgeInsets.all(8),
-                        child: Center(
-                          child: Text(
-                            'Item $index',
-                            style: const TextStyle(
-                              color: Colors.black,
-                              fontSize: 20,
+                                        child: const Text('Cancelar')),
+                                  ));
+                        },
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  PokemonView(pokemon: pokemon),
                             ),
+                          );
+                        },
+                        child: Container(
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            image: const DecorationImage(
+                              image: AssetImage('Assets/bgPoke.png'),
+                              fit: BoxFit.cover,
+                              opacity: 0.9,
+                            ),
+                            borderRadius: BorderRadius.circular(15),
+                            color: Colors.grey,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.2),
+                                spreadRadius: 3,
+                                blurRadius: 5,
+                                offset: const Offset(0, 0),
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment
+                                    .end, // Alinea los elementos a la derecha
+                                children: [
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                          right: 14.0, top: 10.0),
+                                      child: Text(
+                                        '#${pokemon.id}',
+                                        textAlign: TextAlign.right,
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14,
+                                            color: Colors.white),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              CachedNetworkImage(
+                                placeholder: (context, url) =>
+                                    const CircularProgressIndicator(),
+                                imageUrl: pokemon.urlimage,
+                                errorWidget: (context, url, error) =>
+                                    const Icon(Icons.error),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 10.0),
+                                child: Text(
+                                  pokemon.name,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 17,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                      ),
-                    );
-                  },
-                )))
+                      ));
+                }),
+          ),
+        ),
       ],
     );
   }
