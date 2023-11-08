@@ -2,8 +2,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pokedex/Models/pokemon.dart';
+import 'package:pokedex/UI/pokemon_favorites.dart';
 import 'package:pokedex/UI/pokemon_view.dart';
+import 'package:pokedex/Utils/pokemon-favorites.dart';
 import 'package:pokedex/Utils/pokemon-services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -12,8 +15,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Pokédex',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25)),
+        title: const Text('Pokédex', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25)),
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
         elevation: 0,
@@ -44,6 +46,7 @@ class HomePageContent extends StatefulWidget {
 class _HomePageContentState extends State<HomePageContent> {
   TextEditingController searchController = TextEditingController();
 
+  ListPokemonFavorites pokemonFavorites = ListPokemonFavorites();
   PokemonService pokemonService = PokemonService();
   List<Pokemon> pokemonListAll = [];
   List<Pokemon> pokemonListFiltered = [];
@@ -51,6 +54,7 @@ class _HomePageContentState extends State<HomePageContent> {
   @override
   void initState() {
     _fetchPokemons();
+    // _getFavorites();
     super.initState();
   }
 
@@ -69,10 +73,7 @@ class _HomePageContentState extends State<HomePageContent> {
 
   void filterSearchResults(String query) {
     setState(() {
-      pokemonListFiltered = pokemonListAll
-          .where(
-              (item) => item.name.toLowerCase().contains(query.toLowerCase()))
-          .toList();
+      pokemonListFiltered = pokemonListAll.where((item) => item.name.toLowerCase().contains(query.toLowerCase())).toList();
     });
   }
 
@@ -109,10 +110,7 @@ class _HomePageContentState extends State<HomePageContent> {
             padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
             child: GridView.builder(
                 gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent: 200,
-                    childAspectRatio: 3 / 4,
-                    crossAxisSpacing: 2,
-                    mainAxisSpacing: 5),
+                    maxCrossAxisExtent: 200, childAspectRatio: 3 / 4, crossAxisSpacing: 2, mainAxisSpacing: 5),
                 itemCount: pokemonListFiltered.length,
                 itemBuilder: (BuildContext ctx, index) {
                   final Pokemon pokemon = pokemonListFiltered[index];
@@ -123,16 +121,15 @@ class _HomePageContentState extends State<HomePageContent> {
                         onLongPress: () {
                           showCupertinoModalPopup(
                               context: context,
-                              builder: (BuildContext context) =>
-                                  CupertinoActionSheet(
+                              builder: (BuildContext context) => CupertinoActionSheet(
                                     title: const Text("Opciones"),
                                     actions: [
                                       CupertinoActionSheetAction(
                                           onPressed: () {
+                                            pokemonFavorites.addFavorite(pokemon);
                                             Navigator.pop(context, 'Fav');
                                           },
-                                          child: const Text(
-                                              "Agregar a Favoritos ❤️")),
+                                          child: const Text("Agregar a Favoritos ❤️")),
                                       CupertinoActionSheetAction(
                                           onPressed: () {
                                             Navigator.pop(context, 'See');
@@ -151,8 +148,7 @@ class _HomePageContentState extends State<HomePageContent> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) =>
-                                  PokemonView(pokemon: pokemon),
+                              builder: (context) => PokemonView(pokemon: pokemon),
                             ),
                           );
                         },
@@ -178,31 +174,24 @@ class _HomePageContentState extends State<HomePageContent> {
                           child: Column(
                             children: [
                               Row(
-                                mainAxisAlignment: MainAxisAlignment
-                                    .end, // Alinea los elementos a la derecha
+                                mainAxisAlignment: MainAxisAlignment.end, // Alinea los elementos a la derecha
                                 children: [
                                   Expanded(
                                     child: Padding(
-                                      padding: const EdgeInsets.only(
-                                          right: 14.0, top: 10.0),
+                                      padding: const EdgeInsets.only(right: 14.0, top: 10.0),
                                       child: Text(
                                         '#${pokemon.id}',
                                         textAlign: TextAlign.right,
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 14,
-                                            color: Colors.white),
+                                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.white),
                                       ),
                                     ),
                                   ),
                                 ],
                               ),
                               CachedNetworkImage(
-                                placeholder: (context, url) =>
-                                    const CircularProgressIndicator(),
+                                placeholder: (context, url) => const CircularProgressIndicator(),
                                 imageUrl: pokemon.urlimage,
-                                errorWidget: (context, url, error) =>
-                                    const Icon(Icons.error),
+                                errorWidget: (context, url, error) => const Icon(Icons.error),
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(top: 10.0),
