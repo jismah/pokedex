@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:pokedex/UI/home.dart';
 import 'package:pokedex/UI/pokemon_favorites.dart';
+import 'package:pokedex/UI/pokemon_view.dart';
+import 'package:pokedex/Utils/pokemon-services.dart';
 
 void main() {
   runApp(const MainApp());
@@ -11,7 +13,7 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+        return MaterialApp(
       theme: ThemeData(scaffoldBackgroundColor: Colors.white),
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
