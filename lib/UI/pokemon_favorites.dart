@@ -29,6 +29,7 @@ class _PokemonFavoritesState extends State<PokemonFavorites> {
 
   Text _getinitialtext() {
     print(pokemonFavoritesList);
+    //JOHN MODIFICA ESTOOO
     return Text(pokemonFavoritesList[0].name ?? "toy vacio mmg llename");
   }
 }

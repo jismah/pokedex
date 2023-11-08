@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:pokedex/Models/pokemon.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+//Clase Singleton que manejará los favoritos con SharedPreference
 class ListPokemonFavorites {
   static final ListPokemonFavorites _instance = ListPokemonFavorites._internal();
   List<String>? jsonFavorites;
@@ -21,6 +22,7 @@ class ListPokemonFavorites {
     _getFavoritesFromSP();
   }
 
+  //Funcion que busca en el shared preference los pokemones almacenados como favoritos
   Future<void> _getFavoritesFromSP() async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -31,8 +33,9 @@ class ListPokemonFavorites {
     }
   }
 
+  //Funcion que convierte un pokemon en un json para almacenarlo en string en el SharedPreference
   void addFavorite(Pokemon pokemon) async {
-    Map<String, dynamic> jsonbase = {'id': pokemon.id, 'name': pokemon.name, 'urlimage': pokemon.urlimage, 'url' : pokemon.url};
+    Map<String, dynamic> jsonbase = {'id': pokemon.id, 'name': pokemon.name, 'urlimage': pokemon.urlimage, 'url': pokemon.url};
     final String jsonString = jsonEncode(jsonbase);
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
@@ -43,6 +46,7 @@ class ListPokemonFavorites {
     print("FAVS: $jsonFavorites");
   }
 
+  //Funcion que retorna una lista del objeto de Pokemon dado el json almacenado en SharedPreference
   List<Pokemon> getPokemonFavorites() {
     List<Pokemon> favoritePokemonList = [];
 
