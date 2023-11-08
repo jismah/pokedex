@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:pokedex/Models/pokemon.dart';
 
-int limit = 20;
+int limit = 1300;
 
 class PokemonService {
   String baseurl = 'https://pokeapi.co/api/v2/';
@@ -12,12 +12,16 @@ class PokemonService {
     final response = await http.get(Uri.parse('$baseurl$nextUrl'));
 
     if (response.statusCode == 200) {
-      Map<String, dynamic> body = jsonDecode(response.body) as Map<String, dynamic>;
-      final List<Pokemon> lista = (body['results'] as List<dynamic>).map<Pokemon>((item) => Pokemon.fromJson(item)).toList();
+      Map<String, dynamic> body =
+          jsonDecode(response.body) as Map<String, dynamic>;
+      final List<Pokemon> lista = (body['results'] as List<dynamic>)
+          .map<Pokemon>((item) => Pokemon.fromJson(item))
+          .toList();
 
       for (var pokemon in lista) {
         pokemon.id = findId(pokemon.url);
-        pokemon.urlimage = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/${pokemon.id}.png';
+        pokemon.urlimage =
+            'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/${pokemon.id}.png';
       }
       nextUrl = body['nextUrl'];
       return lista;
@@ -27,17 +31,27 @@ class PokemonService {
   }
 
   Future<void> fetchPokemon(Pokemon pokemon) async {
-    final response = await http.get(Uri.parse('$baseurl/pokemon/${pokemon.name}'));
+    final response =
+        await http.get(Uri.parse('$baseurl/pokemon/${pokemon.name}'));
 
     if (response.statusCode == 200) {
-      Map<String, dynamic> body = jsonDecode(response.body) as Map<String, dynamic>;
+      Map<String, dynamic> body =
+          jsonDecode(response.body) as Map<String, dynamic>;
       final statsjson = body['stats'] as List<dynamic>;
       final typesjson = body['types'] as List<dynamic>;
 
       pokemon.id = body['id'] as int;
-      // pokemon.urlimage = body['sprites']['other']['home']['front_default'] as String;
+
+      pokemon.urlimage =
+          body['sprites']['other']['home']['front_default'] as String;
+
       pokemon.stats = getstatsfromjson(statsjson);
-      pokemon.types = gettypesfromjson(typesjson);
+
+      pokemon.types = gettypesfronjson(body['types'] as List<dynamic>);
+
+      print("Datos del Pokemon Cargados!");
+      print(pokemon.stats);
+      print(pokemon.types);
     } else {
       throw Exception('Failed to load the Pokemon: ${pokemon.name}');
     }
