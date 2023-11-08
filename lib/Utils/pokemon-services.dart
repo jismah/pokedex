@@ -32,11 +32,12 @@ class PokemonService {
     if (response.statusCode == 200) {
       Map<String, dynamic> body = jsonDecode(response.body) as Map<String, dynamic>;
       final statsjson = body['stats'] as List<dynamic>;
+      final typesjson = body['types'] as List<dynamic>;
 
       pokemon.id = body['id'] as int;
-      pokemon.urlimage = body['sprites']['other']['home']['front_default'] as String;
+      // pokemon.urlimage = body['sprites']['other']['home']['front_default'] as String;
       pokemon.stats = getstatsfromjson(statsjson);
-      pokemon.types = gettypesfronjson(body['types'] as List<dynamic>);
+      pokemon.types = gettypesfromjson(typesjson);
     } else {
       throw Exception('Failed to load the Pokemon: ${pokemon.name}');
     }
@@ -52,7 +53,7 @@ class PokemonService {
     return hash;
   }
 
-  Map<int, String> gettypesfronjson(List json) {
+  Map<int, String> gettypesfromjson(List json) {
     Map<int, String> hash = <int, String>{};
 
     for (var type in json) {
