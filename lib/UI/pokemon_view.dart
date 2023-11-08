@@ -164,6 +164,35 @@ class _PokemonViewState extends State<PokemonView> {
     }
   }
 
+  Icon determinarIconoTipo(String tipoEnIngles) {
+    Map<String, IconData> iconosPorTipo = {
+      'fire': Icons.whatshot,
+      'water': Icons.water_drop,
+      'grass': Icons.grass,
+      'normal': Icons.pets,
+      'electric': Icons.electric_bolt,
+      'ice': Icons.ac_unit,
+      'fighting': Icons.dry,
+      'poison': Icons.coronavirus,
+      'bug': Icons.emoji_nature,
+      'ground': Icons.volcano,
+      'flying': Icons.air,
+      'psychic': Icons.psychology,
+      'rock': Icons.public,
+      'ghost': Icons.help_center,
+      'dragon': Icons.local_fire_department,
+      'dark': Icons.nights_stay,
+      'steel': Icons.smart_toy,
+      'fairy': Icons.auto_fix_normal,
+    };
+
+    if (iconosPorTipo.containsKey(tipoEnIngles)) {
+      return Icon(iconosPorTipo[tipoEnIngles]);
+    }
+
+    return const Icon(Icons.pets);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -207,6 +236,12 @@ class _PokemonViewState extends State<PokemonView> {
                             bottomLeft: Radius.circular(0.0),
                             bottomRight: Radius.circular(120.0),
                           ),
+                          image: const DecorationImage(
+                            image: AssetImage('Assets/pokeball.png'),
+                            fit: BoxFit.contain,
+                            alignment: Alignment.centerRight,
+                            opacity: 0.3,
+                          ),
                           boxShadow: [
                             BoxShadow(
                               color: Colors.grey.withOpacity(0.5),
@@ -246,33 +281,44 @@ class _PokemonViewState extends State<PokemonView> {
                   height: 20, // Altura del espacio entre los widgets
                 ),
                 SizedBox(
-                  height: 30,
+                  height: 40,
                   child: Center(
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: tipos.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        String tipoEnIngles = tipos[index];
-                        String tipoTraducido = traducirTipo(tipos[index]);
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: tipos.map((tipoEnIngles) {
+                        String tipoTraducido = traducirTipo(tipoEnIngles);
                         Color colorTipo = obtenerColorPorTipo(tipoEnIngles);
+                        Icon tipoIcon = determinarIconoTipo(tipoEnIngles);
 
                         return Container(
                           margin: const EdgeInsets.symmetric(horizontal: 4),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 18, vertical: 6),
+                          padding: const EdgeInsets.all(6),
                           decoration: BoxDecoration(
                             color: colorTipo,
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          child: Text(
-                            tipoTraducido,
-                            style: TextStyle(
+                          child: Row(
+                            children: [
+                              Icon(
+                                tipoIcon.icon,
                                 color:
                                     determineColorBasedOnBackground(colorTipo),
-                                fontWeight: FontWeight.bold),
+                              ),
+                              const SizedBox(
+                                  width:
+                                      5), // Espacio entre el icono y el texto
+                              Text(
+                                tipoTraducido,
+                                style: TextStyle(
+                                  color: determineColorBasedOnBackground(
+                                      colorTipo),
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
                           ),
                         );
-                      },
+                      }).toList(),
                     ),
                   ),
                 ),
