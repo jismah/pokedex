@@ -16,6 +16,7 @@ class _PokemonViewState extends State<PokemonView> {
   final PokemonService pokemonService = PokemonService();
   List<String> tipos = [];
   Map<String, int> estadisticas = {};
+  Color colorBase = Colors.red;
 
   @override
   void initState() {
@@ -177,69 +178,106 @@ class _PokemonViewState extends State<PokemonView> {
             title: Text(
               widget.pokemon.name,
               style:
-                  const TextStyle(fontWeight: FontWeight.bold, fontSize: 23.0),
+                  const TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
             ),
             bottom: PreferredSize(
                 preferredSize: Size.zero,
                 child: Text(
                   "#${widget.pokemon.id}",
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: determineColorBasedOnBackground(colorBase)),
                 )),
-            backgroundColor: Colors.white,
-            foregroundColor: Colors.black,
+            backgroundColor: colorBase,
+            foregroundColor: determineColorBasedOnBackground(colorBase),
             elevation: 0,
           ),
           body: SingleChildScrollView(
             child: Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 0, left: 50, right: 50),
-                  child: Image.network(
-                    widget.pokemon.urlimage,
-                    width: 200,
-                    height: 200,
-                    loadingBuilder: (BuildContext context, Widget child,
-                        ImageChunkEvent? loadingProgress) {
-                      if (loadingProgress == null) {
-                        return child;
-                      } else {
-                        return const CircularProgressIndicator();
-                      }
-                    },
-                  ),
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: Container(
+                        height: MediaQuery.of(context).size.height / 4,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: colorBase,
+                          borderRadius: const BorderRadius.only(
+                            bottomLeft: Radius.circular(0.0),
+                            bottomRight: Radius.circular(120.0),
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              spreadRadius: 5,
+                              blurRadius: 7,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  top: 0, left: 50, right: 50),
+                              child: Image.network(
+                                widget.pokemon.urlimage,
+                                width: 200,
+                                height: 200,
+                                loadingBuilder: (BuildContext context,
+                                    Widget child,
+                                    ImageChunkEvent? loadingProgress) {
+                                  if (loadingProgress == null) {
+                                    return child;
+                                  } else {
+                                    return const CircularProgressIndicator();
+                                  }
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(
                   height: 20, // Altura del espacio entre los widgets
                 ),
                 SizedBox(
-                  height: 40,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: tipos.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      String tipoEnIngles = tipos[index];
-                      String tipoTraducido = traducirTipo(tipos[index]);
-                      Color colorTipo = obtenerColorPorTipo(tipoEnIngles);
+                  height: 30,
+                  child: Center(
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: tipos.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        String tipoEnIngles = tipos[index];
+                        String tipoTraducido = traducirTipo(tipos[index]);
+                        Color colorTipo = obtenerColorPorTipo(tipoEnIngles);
 
-                      return Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 4),
-                        padding: const EdgeInsets.all(6),
-                        decoration: BoxDecoration(
-                          color: colorTipo,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Text(
-                          tipoTraducido,
-                          style: TextStyle(
-                              color: determineColorBasedOnBackground(colorTipo),
-                              fontWeight: FontWeight.bold),
-                        ),
-                      );
-                    },
+                        return Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 4),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 18, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: colorTipo,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            tipoTraducido,
+                            style: TextStyle(
+                                color:
+                                    determineColorBasedOnBackground(colorTipo),
+                                fontWeight: FontWeight.bold),
+                          ),
+                        );
+                      },
+                    ),
                   ),
                 ),
                 const SizedBox(
-                  height: 40, // Altura del espacio entre los widgets
+                  height: 20, // Altura del espacio entre los widgets
                 ),
                 Column(
                   children: estadisticas.entries.map((entry) {
