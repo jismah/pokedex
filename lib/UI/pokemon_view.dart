@@ -16,7 +16,7 @@ class _PokemonViewState extends State<PokemonView> {
   final PokemonService pokemonService = PokemonService();
   List<String> tipos = [];
   Map<String, int> estadisticas = {};
-  Color colorBase = Colors.blue;
+  Color colorBase = Colors.red;
 
   @override
   void initState() {
