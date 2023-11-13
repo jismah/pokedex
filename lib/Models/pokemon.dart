@@ -11,6 +11,7 @@ class Pokemon extends PokemonService {
   late String urlimage;
   late Map<String, int> stats;
   late Map<int, String> types;
+  late Map<String, bool> abilities;
 
   Pokemon({required this.name, required this.url});
 

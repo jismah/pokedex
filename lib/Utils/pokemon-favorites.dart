@@ -26,7 +26,7 @@ class ListPokemonFavorites {
   Future<void> _getFavoritesFromSP() async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      print("SHARED PREFRENCE: ${prefs.getStringList("favorites")}");
+      // print("SHARED PREFRENCE: ${prefs.getStringList("favorites")}");
       _instance.jsonFavorites = prefs.getStringList("favorites");
     } catch (e) {
       print('Error al obtener la lista de Favoritos: $e');
