@@ -36,23 +36,26 @@ class PokemonService {
 
     if (response.statusCode == 200) {
       Map<String, dynamic> body = jsonDecode(response.body) as Map<String, dynamic>;
+
       final statsjson = body['stats'] as List<dynamic>;
       final typesjson = body['types'] as List<dynamic>;
       final abilitiesjson = body['abilities'] as List<dynamic>;
+      final movesjson = body['moves'] as List<dynamic>;
 
-      // print(abilitiesjson);
       pokemon.id = body['id'] as int;
-
       pokemon.urlimage = body['sprites']['other']['home']['front_default'] as String;
 
+      print("VOy a buscar las estadisticas");
       pokemon.stats = getstatsfromjson(statsjson);
       pokemon.types = gettypesfromjson(typesjson);
       pokemon.abilities = getabilitiesfromjson(abilitiesjson);
+      pokemon.moves = getmovesfromjson(movesjson);
 
       print("Datos del Pokemon Cargados!");
       // print(pokemon.stats);
       // print(pokemon.types);
-      print(pokemon.abilities);
+      // print(pokemon.abilities);
+      // print(pokemon.moves);
     } else {
       throw Exception('Failed to load the Pokemon: ${pokemon.name}');
     }
@@ -86,6 +89,17 @@ class PokemonService {
     for (var ability in abilitiesjson) {
       bool hidden = ability['is_hidden'];
       hash[ability['ability']['name']] = hidden;
+    }
+    return hash;
+  }
+
+  Map<int, String> getmovesfromjson(List movesjson) {
+    Map<int, String> hash = <int, String>{};
+    int count = 0;
+
+    for (var move in movesjson) {
+      hash[count] = move['move']['name'];
+      count++;
     }
     return hash;
   }

@@ -1,11 +1,13 @@
 import 'dart:convert';
 
 import 'package:pokedex/Models/pokemon.dart';
+import 'package:pokedex/Utils/pokemon-services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 //Clase Singleton que manejará los favoritos con SharedPreference
 class ListPokemonFavorites {
   static final ListPokemonFavorites _instance = ListPokemonFavorites._internal();
+  PokemonService pokemonService = PokemonService();
   List<String>? jsonFavorites;
 
   ListPokemonFavorites._();
@@ -35,15 +37,27 @@ class ListPokemonFavorites {
 
   //Funcion que convierte un pokemon en un json para almacenarlo en string en el SharedPreference
   void addFavorite(Pokemon pokemon) async {
-    Map<String, dynamic> jsonbase = {'id': pokemon.id, 'name': pokemon.name, 'urlimage': pokemon.urlimage, 'url': pokemon.url};
-    final String jsonString = jsonEncode(jsonbase);
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    jsonFavorites ??= [];
+    try {
+      await pokemonService.fetchPokemon(pokemon);
+      List<String> types = pokemon.types.values.toList();
+      print(types);
 
-    _instance.jsonFavorites?.add(jsonString);
-    prefs.setStringList("favorites", jsonFavorites ?? []);
-    print("FAVS: $jsonFavorites");
+      Map<String, dynamic> jsonbase = {'id': pokemon.id, 'name': pokemon.name, 'urlimage': pokemon.urlimage, 'types': types};
+      final String jsonString = jsonEncode(jsonbase);
+      print(jsonString);
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+      jsonFavorites ??= [];
+
+      _instance.jsonFavorites?.add(jsonString);
+      prefs.setStringList("favorites", jsonFavorites ?? []);
+      print("FAVS: $jsonFavorites");
+    } catch (e) {
+      // ignore: avoid_print
+      print(e);
+    } 
+
   }
 
   //Funcion que retorna una lista del objeto de Pokemon dado el json almacenado en SharedPreference
