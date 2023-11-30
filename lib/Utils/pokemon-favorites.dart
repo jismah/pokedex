@@ -37,7 +37,6 @@ class ListPokemonFavorites {
 
   //Funcion que convierte un pokemon en un json para almacenarlo en string en el SharedPreference
   void addFavorite(Pokemon pokemon) async {
-
     try {
       await pokemonService.fetchPokemon(pokemon);
       List<String> types = pokemon.types.values.toList();
@@ -56,8 +55,7 @@ class ListPokemonFavorites {
     } catch (e) {
       // ignore: avoid_print
       print(e);
-    } 
-
+    }
   }
 
   //Funcion que retorna una lista del objeto de Pokemon dado el json almacenado en SharedPreference

@@ -45,7 +45,6 @@ class PokemonService {
       pokemon.id = body['id'] as int;
       pokemon.urlimage = body['sprites']['other']['home']['front_default'] as String;
 
-      print("VOy a buscar las estadisticas");
       pokemon.stats = getstatsfromjson(statsjson);
       pokemon.types = gettypesfromjson(typesjson);
       pokemon.abilities = getabilitiesfromjson(abilitiesjson);
