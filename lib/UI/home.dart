@@ -19,9 +19,20 @@ class HomePage extends StatelessWidget {
         foregroundColor: Colors.black,
         elevation: 0,
         toolbarHeight: 70,
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(
+              Icons.favorite,
+              color: Colors.black,
+            ),
+            onPressed: () {
+              Navigator.pushNamed(context, 'favorites');
+            },
+          ),
+        ],
       ),
       body: const HomePageContent(),
-      floatingActionButton: FloatingActionButton(
+      /* floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.red.shade900,
         onPressed: () {
           Navigator.pushNamed(context, 'favorites');
@@ -30,7 +41,7 @@ class HomePage extends StatelessWidget {
           Icons.favorite,
           color: Colors.white,
         ),
-      ),
+      ), */
     );
   }
 }

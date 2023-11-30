@@ -196,13 +196,8 @@ class _PokemonViewState extends State<PokemonView> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage('Assets/bgPoke.png'),
-          fit: BoxFit.cover,
-        ),
-      ),
       child: Scaffold(
+          backgroundColor: colorBase,
           appBar: AppBar(
             title: Text(
               widget.pokemon.name,
@@ -220,6 +215,15 @@ class _PokemonViewState extends State<PokemonView> {
             backgroundColor: colorBase,
             foregroundColor: determineColorBasedOnBackground(colorBase),
             elevation: 0,
+            actions: <Widget>[
+              IconButton(
+                icon: Icon(
+                  Icons.favorite,
+                  color: determineColorBasedOnBackground(colorBase),
+                ),
+                onPressed: () {},
+              ),
+            ],
           ),
           body: SingleChildScrollView(
             child: Column(
@@ -230,26 +234,13 @@ class _PokemonViewState extends State<PokemonView> {
                       child: Container(
                         height: MediaQuery.of(context).size.height / 4,
                         width: double.infinity,
-                        decoration: BoxDecoration(
-                          color: colorBase,
-                          borderRadius: const BorderRadius.only(
-                            bottomLeft: Radius.circular(0.0),
-                            bottomRight: Radius.circular(120.0),
-                          ),
-                          image: const DecorationImage(
-                            image: AssetImage('Assets/pokeball.png'),
+                        decoration: const BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage('Assets/pokeballIcon.png'),
                             fit: BoxFit.contain,
                             alignment: Alignment.centerRight,
-                            opacity: 0.3,
+                            opacity: 0.1,
                           ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
-                              spreadRadius: 5,
-                              blurRadius: 7,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
                         ),
                         child: Column(
                           children: [
@@ -277,102 +268,120 @@ class _PokemonViewState extends State<PokemonView> {
                     ),
                   ],
                 ),
-                const SizedBox(
-                  height: 20, // Altura del espacio entre los widgets
-                ),
-                SizedBox(
-                  height: 40,
-                  child: Center(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: tipos.map((tipoEnIngles) {
-                        String tipoTraducido = traducirTipo(tipoEnIngles);
-                        Color colorTipo = obtenerColorPorTipo(tipoEnIngles);
-                        Icon tipoIcon = determinarIconoTipo(tipoEnIngles);
-
-                        return Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 4),
-                          padding: const EdgeInsets.all(6),
-                          decoration: BoxDecoration(
-                            color: colorTipo,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(
-                                tipoIcon.icon,
-                                color:
-                                    determineColorBasedOnBackground(colorTipo),
-                              ),
-                              const SizedBox(
-                                  width:
-                                      5), // Espacio entre el icono y el texto
-                              Text(
-                                tipoTraducido,
-                                style: TextStyle(
-                                  color: determineColorBasedOnBackground(
-                                      colorTipo),
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      }).toList(),
+                Container(
+                  height: MediaQuery.of(context).size.height / 1.5,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(50.0),
+                      topRight: Radius.circular(50.0),
                     ),
-                  ),
-                ),
-                const SizedBox(
-                  height: 20, // Altura del espacio entre los widgets
-                ),
-                Column(
-                  children: estadisticas.entries.map((entry) {
-                    String stat = entry.key;
-                    int value = entry.value;
-                    String estadisticaTipo = traducirEstadistica(stat);
-
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 8.0, horizontal: 10.0),
-                      child: Row(
-                        children: [
-                          Text(
-                            estadisticaTipo,
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          SizedBox(width: 10),
-                          Expanded(
-                            child: LinearProgressIndicator(
-                              value: value / 200,
-                              backgroundColor: Colors.grey,
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                determineColorBasedOnValue(value),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          Text(
-                            '$value',
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ],
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.2),
+                        spreadRadius: 2,
+                        blurRadius: 3,
+                        offset: const Offset(0, 0),
                       ),
-                    );
-                  }).toList(),
-                ),
-                const SizedBox(
-                  height: 15,
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10),
-                  child: Placeholder(
-                    fallbackHeight: 400.0,
-                    fallbackWidth: 200.0,
+                    ],
                   ),
-                ),
+                  child: Column(
+                    children: [
+                      const SizedBox(
+                        height: 20, // Altura del espacio entre los widgets
+                      ),
+                      SizedBox(
+                        height: 40,
+                        child: Center(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: tipos.map((tipoEnIngles) {
+                              String tipoTraducido = traducirTipo(tipoEnIngles);
+                              Color colorTipo =
+                                  obtenerColorPorTipo(tipoEnIngles);
+                              Icon tipoIcon = determinarIconoTipo(tipoEnIngles);
+                              colorBase = colorTipo;
+
+                              return Container(
+                                margin:
+                                    const EdgeInsets.symmetric(horizontal: 4),
+                                padding: const EdgeInsets.all(6),
+                                decoration: BoxDecoration(
+                                  color: colorTipo,
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      tipoIcon.icon,
+                                      color: determineColorBasedOnBackground(
+                                          colorTipo),
+                                    ),
+                                    const SizedBox(
+                                        width:
+                                            5), // Espacio entre el icono y el texto
+                                    Text(
+                                      tipoTraducido,
+                                      style: TextStyle(
+                                        color: determineColorBasedOnBackground(
+                                            colorTipo),
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 20, // Altura del espacio entre los widgets
+                      ),
+                      Column(
+                        children: estadisticas.entries.map((entry) {
+                          String stat = entry.key;
+                          int value = entry.value;
+                          String estadisticaTipo = traducirEstadistica(stat);
+
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 8.0, horizontal: 10.0),
+                            child: Row(
+                              children: [
+                                Text(
+                                  estadisticaTipo,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                SizedBox(width: 10),
+                                Expanded(
+                                  child: LinearProgressIndicator(
+                                    value: value / 200,
+                                    backgroundColor: Colors.grey,
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      determineColorBasedOnValue(value),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 10),
+                                Text(
+                                  '$value',
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                    ],
+                  ),
+                )
               ],
             ),
           )),

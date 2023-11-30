@@ -10,7 +10,8 @@ class PokemonFavorites extends StatefulWidget {
 }
 
 class _PokemonFavoritesState extends State<PokemonFavorites> {
-  List<Pokemon> pokemonFavoritesList = ListPokemonFavorites().getPokemonFavorites();
+  List<Pokemon> pokemonFavoritesList =
+      ListPokemonFavorites().getPokemonFavorites();
 
   @override
   Widget build(BuildContext context) {
@@ -23,8 +24,7 @@ class _PokemonFavoritesState extends State<PokemonFavorites> {
           foregroundColor: Colors.black,
           elevation: 0,
         ),
-        // body: const Center(child: Text("Lista de Favoritos")),
-        body: Center(child: _getinitialtext()));
+        body: const Center(child: Text("Favoritos")));
   }
 
   Text _getinitialtext() {
