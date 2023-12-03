@@ -25,7 +25,6 @@ class Pokemon extends PokemonService {
     if (json['id'] != null) {
       pokemon.id = json['id'];
     }
-
     return pokemon;
   }
 }

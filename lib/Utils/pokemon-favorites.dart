@@ -42,7 +42,7 @@ class ListPokemonFavorites {
       List<String> types = pokemon.types.values.toList();
       print(types);
 
-      Map<String, dynamic> jsonbase = {'id': pokemon.id, 'name': pokemon.name, 'urlimage': pokemon.urlimage, 'types': types};
+      Map<String, dynamic> jsonbase = {'id': pokemon.id, 'name': pokemon.name, 'url' : pokemon.url, 'urlimage': pokemon.urlimage, 'types': types};
       final String jsonString = jsonEncode(jsonbase);
       print(jsonString);
       final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -76,4 +76,8 @@ class ListPokemonFavorites {
   }
 
   String jsonEncode(Object? object, {Object? Function(Object? nonEncodable)? toEncodable}) => json.encode(object, toEncodable: toEncodable);
+
+  void removeFavorite(Pokemon pokemon) {
+    print("Gabriel crea este metodo");
+  }
 }
