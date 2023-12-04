@@ -19,7 +19,7 @@ class MainApp extends StatelessWidget {
       initialRoute: '/',
       routes: <String, WidgetBuilder>{
         '/': (BuildContext context) => const HomePage(),
-        'favorites': (BuildContext context) => const PokemonFavorites(),
+        'favorites': (BuildContext context) => const Favorites(),
       },
     );
   }

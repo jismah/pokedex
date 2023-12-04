@@ -12,23 +12,22 @@ class Favorites extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Pokédex',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25)),
+        title: const Text('Favoritos', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25)),
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
         elevation: 0,
         toolbarHeight: 70,
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(
-              Icons.favorite,
-              color: Colors.black,
-            ),
-            onPressed: () {
-              Navigator.pushNamed(context, 'favorites');
-            },
-          ),
-        ],
+        // actions: <Widget>[
+        //   IconButton(
+        //     icon: const Icon(
+        //       Icons.favorite,
+        //       color: Colors.black,
+        //     ),
+        //     onPressed: () {
+        //       Navigator.pushNamed(context, 'favorites');
+        //     },
+        //   ),
+        // ],
       ),
       body: const PokemonFavorites(),
       /* floatingActionButton: FloatingActionButton(
@@ -97,10 +96,7 @@ class _PokemonFavoritesState extends State<PokemonFavorites> {
             padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
             child: GridView.builder(
                 gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent: 200,
-                    childAspectRatio: 3 / 4,
-                    crossAxisSpacing: 2,
-                    mainAxisSpacing: 5),
+                    maxCrossAxisExtent: 200, childAspectRatio: 3 / 4, crossAxisSpacing: 2, mainAxisSpacing: 5),
                 itemCount: pokemonFavorites.getPokemonFavorites().length,
                 itemBuilder: (BuildContext ctx, index) {
                   final Pokemon pokemon = pokemonListAll[index];
@@ -111,18 +107,15 @@ class _PokemonFavoritesState extends State<PokemonFavorites> {
                         onLongPress: () {
                           showCupertinoModalPopup(
                               context: context,
-                              builder: (BuildContext context) =>
-                                  CupertinoActionSheet(
+                              builder: (BuildContext context) => CupertinoActionSheet(
                                     title: const Text("Opciones"),
                                     actions: [
                                       CupertinoActionSheetAction(
                                           onPressed: () {
-                                            pokemonFavorites
-                                                .removeFavorite(pokemon);
+                                            _removeFavorite(pokemon);
                                             Navigator.pop(context, 'Fav');
                                           },
-                                          child: const Text(
-                                              "Quitar de Favoritos ❤️")),
+                                          child: const Text("Quitar de Favoritos")),
                                       CupertinoActionSheetAction(
                                           onPressed: () {
                                             Navigator.pop(context, 'See');
@@ -141,8 +134,7 @@ class _PokemonFavoritesState extends State<PokemonFavorites> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) =>
-                                  PokemonView(pokemon: pokemon),
+                              builder: (context) => PokemonView(pokemon: pokemon),
                             ),
                           );
                         },
@@ -168,31 +160,24 @@ class _PokemonFavoritesState extends State<PokemonFavorites> {
                           child: Column(
                             children: [
                               Row(
-                                mainAxisAlignment: MainAxisAlignment
-                                    .end, // Alinea los elementos a la derecha
+                                mainAxisAlignment: MainAxisAlignment.end, // Alinea los elementos a la derecha
                                 children: [
                                   Expanded(
                                     child: Padding(
-                                      padding: const EdgeInsets.only(
-                                          right: 14.0, top: 10.0),
+                                      padding: const EdgeInsets.only(right: 14.0, top: 10.0),
                                       child: Text(
                                         '#${pokemon.id}',
                                         textAlign: TextAlign.right,
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 14,
-                                            color: Colors.white),
+                                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.white),
                                       ),
                                     ),
                                   ),
                                 ],
                               ),
                               CachedNetworkImage(
-                                placeholder: (context, url) =>
-                                    const CircularProgressIndicator(),
+                                placeholder: (context, url) => const CircularProgressIndicator(),
                                 imageUrl: pokemon.urlimage,
-                                errorWidget: (context, url, error) =>
-                                    const Icon(Icons.error),
+                                errorWidget: (context, url, error) => const Icon(Icons.error),
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(top: 10.0),
@@ -214,13 +199,27 @@ class _PokemonFavoritesState extends State<PokemonFavorites> {
       ],
     );
   }
-  
+
   void _getPokemonListAll() {
     try {
       pokemonListAll = pokemonFavorites.getPokemonFavorites();
-        setState(() {
-          // Actualiza el estado con la lista de Pokémon obtenida
-          pokemonListAll = pokemonListAll;
+      setState(() {
+        // Actualiza el estado con la lista de Pokémon obtenida
+        pokemonListAll = pokemonListAll;
+        print("FAVS _getPokemonListAll: ${pokemonListAll}");
+      });
+    } catch (e) {
+      print('Error al obtener la lista de Pokémon: $e');
+    }
+  }
+
+  void _removeFavorite(Pokemon pokemon) async {
+    try {
+      pokemonFavorites.deletePokemon(pokemon);
+      pokemonListAll = pokemonFavorites.getPokemonFavorites();
+      setState(() {
+        // Actualiza el estado con la lista de Pokémon obtenida
+        pokemonListAll = pokemonListAll;
       });
     } catch (e) {
       print('Error al obtener la lista de Pokémon: $e');

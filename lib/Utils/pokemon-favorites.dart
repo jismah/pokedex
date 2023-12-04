@@ -40,18 +40,18 @@ class ListPokemonFavorites {
     try {
       await pokemonService.fetchPokemon(pokemon);
       List<String> types = pokemon.types.values.toList();
-      print(types);
+      // print(types);
 
-      Map<String, dynamic> jsonbase = {'id': pokemon.id, 'name': pokemon.name, 'url' : pokemon.url, 'urlimage': pokemon.urlimage, 'types': types};
+      Map<String, dynamic> jsonbase = {'id': pokemon.id, 'name': pokemon.name, 'url': pokemon.url, 'urlimage': pokemon.urlimage, 'types': types};
       final String jsonString = jsonEncode(jsonbase);
-      print(jsonString);
+      // print(jsonString);
       final SharedPreferences prefs = await SharedPreferences.getInstance();
 
       jsonFavorites ??= [];
 
       _instance.jsonFavorites?.add(jsonString);
       prefs.setStringList("favorites", jsonFavorites ?? []);
-      print("FAVS: $jsonFavorites");
+      print("FAVS addFavorite: $jsonFavorites");
     } catch (e) {
       // ignore: avoid_print
       print(e);
@@ -77,7 +77,28 @@ class ListPokemonFavorites {
 
   String jsonEncode(Object? object, {Object? Function(Object? nonEncodable)? toEncodable}) => json.encode(object, toEncodable: toEncodable);
 
-  void removeFavorite(Pokemon pokemon) {
-    print("Gabriel crea este metodo");
+  void deletePokemon(Pokemon pokemon) async {
+    try {
+      List<String>? favorites = ListPokemonFavorites.getInstance().jsonFavorites;
+
+      if (favorites != null) {
+        for (String element in favorites) {
+          Map<String, dynamic> dato = json.decode(element);
+          if (dato['id'] == pokemon.id) {
+            favorites.remove(element);
+          }
+        }
+      }
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('favorites', json.encode(favorites));
+      
+      jsonFavorites = favorites;
+      print("FAVS REMOVE: $jsonFavorites");
+
+    } catch (e) {
+      // ignore: avoid_print
+      print(e);
+    }
   }
 }
