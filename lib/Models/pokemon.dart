@@ -1,3 +1,6 @@
+import 'dart:collection';
+import 'dart:math';
+
 import 'package:pokedex/Utils/pokemon-services.dart';
 
 const String baseurl = 'https://pokeapi.co/api/v2/';
@@ -24,6 +27,14 @@ class Pokemon extends PokemonService {
     }
     if (json['id'] != null) {
       pokemon.id = json['id'];
+    }
+    if (json['types'] != null) {
+      Map<int, String> hash = new HashMap<int, String>();
+      for (String element in json['types']) {
+        int rand = Random().nextInt(1000);
+        hash[rand] = element;
+      }
+      pokemon.types = hash;
     }
     return pokemon;
   }
