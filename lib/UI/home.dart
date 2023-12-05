@@ -16,14 +16,14 @@ class HomePage extends StatelessWidget {
         title: const Text('Pokédex',
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25)),
         backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
+        foregroundColor: Colors.red.shade600,
         elevation: 0,
         toolbarHeight: 70,
         actions: <Widget>[
           IconButton(
-            icon: const Icon(
+            icon: Icon(
               Icons.favorite,
-              color: Colors.black,
+              color: Colors.red.shade600,
             ),
             onPressed: () {
               Navigator.pushNamed(context, 'favorites');
@@ -32,16 +32,6 @@ class HomePage extends StatelessWidget {
         ],
       ),
       body: const HomePageContent(),
-      /* floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.red.shade900,
-        onPressed: () {
-          Navigator.pushNamed(context, 'favorites');
-        },
-        child: const Icon(
-          Icons.favorite,
-          color: Colors.white,
-        ),
-      ), */
     );
   }
 }
@@ -103,7 +93,7 @@ class _HomePageContentState extends State<HomePageContent> {
             controller: searchController,
             decoration: InputDecoration(
               enabledBorder: OutlineInputBorder(
-                borderSide: const BorderSide(color: Colors.black38, width: 1.5),
+                borderSide: BorderSide(color: Colors.red.shade600, width: 2.5),
                 borderRadius: BorderRadius.circular(10.0),
               ),
               contentPadding: const EdgeInsets.symmetric(vertical: 15),
@@ -213,12 +203,15 @@ class _HomePageContentState extends State<HomePageContent> {
                                   ),
                                 ],
                               ),
-                              CachedNetworkImage(
-                                placeholder: (context, url) =>
-                                    const CircularProgressIndicator(),
-                                imageUrl: pokemon.urlimage,
-                                errorWidget: (context, url, error) =>
-                                    const Icon(Icons.error),
+                              Hero(
+                                tag: 'pokemon_image_${pokemon.id}',
+                                child: CachedNetworkImage(
+                                  placeholder: (context, url) =>
+                                      const CircularProgressIndicator(),
+                                  imageUrl: pokemon.urlimage,
+                                  errorWidget: (context, url, error) =>
+                                      const Icon(Icons.error),
+                                ),
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(top: 10.0),

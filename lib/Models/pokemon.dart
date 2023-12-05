@@ -11,6 +11,9 @@ class Pokemon extends PokemonService {
   late int id;
   String name;
   String url;
+  late int baseExperience;
+  late int height;
+  late int weight;
   late String urlimage;
   late Map<String, int> stats;
   late Map<int, String> types;
@@ -20,14 +23,29 @@ class Pokemon extends PokemonService {
   Pokemon({required this.name, required this.url});
 
   factory Pokemon.fromJson(Map<String, dynamic> json) {
-    Pokemon pokemon = Pokemon(name: json['name'] as String, url: json['url'] as String);
+    Pokemon pokemon =
+        Pokemon(name: json['name'] as String, url: json['url'] as String);
     // pokemon.name = pokemon.name[0].toUpperCase() + pokemon.name.substring(1); No se puede hacer esto porque al buscarlo tira un not found ya que el nombre esta en mayuscula
     if (json['urlimage'] != null) {
       pokemon.urlimage = json['urlimage'];
     }
+
     if (json['id'] != null) {
       pokemon.id = json['id'];
     }
+
+    if (json['height'] != null) {
+      pokemon.height = json['height'];
+    }
+
+    if (json['weight'] != null) {
+      pokemon.weight = json['weight'];
+    }
+
+    if (json['base_experience'] != null) {
+      pokemon.baseExperience = json['base_experience'];
+    }
+
     if (json['types'] != null) {
       Map<int, String> hash = new HashMap<int, String>();
       for (String element in json['types']) {

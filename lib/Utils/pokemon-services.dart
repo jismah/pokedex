@@ -14,14 +14,18 @@ class PokemonService {
     final response = await http.get(Uri.parse('$baseurl$nextUrl'));
 
     if (response.statusCode == 200) {
-      Map<String, dynamic> body = jsonDecode(response.body) as Map<String, dynamic>;
-      final List<Pokemon> lista = (body['results'] as List<dynamic>).map<Pokemon>((item) => Pokemon.fromJson(item)).toList();
+      Map<String, dynamic> body =
+          jsonDecode(response.body) as Map<String, dynamic>;
+      final List<Pokemon> lista = (body['results'] as List<dynamic>)
+          .map<Pokemon>((item) => Pokemon.fromJson(item))
+          .toList();
 
       ///Para todos los pokemones extraemos el ID de la url y creamos la url de la imagen
       ///para no tener que hacer otra petición para extraer el ID y la imagen.
       for (var pokemon in lista) {
         pokemon.id = findId(pokemon.url);
-        pokemon.urlimage = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/${pokemon.id}.png';
+        pokemon.urlimage =
+            'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/${pokemon.id}.png';
       }
       nextUrl = body['nextUrl'];
       return lista;
@@ -32,10 +36,12 @@ class PokemonService {
 
   ///Funcion que busca los detalles de un pokemon dado
   Future<void> fetchPokemon(Pokemon pokemon) async {
-    final response = await http.get(Uri.parse('$baseurl/pokemon/${pokemon.name}'));
+    final response =
+        await http.get(Uri.parse('$baseurl/pokemon/${pokemon.name}'));
 
     if (response.statusCode == 200) {
-      Map<String, dynamic> body = jsonDecode(response.body) as Map<String, dynamic>;
+      Map<String, dynamic> body =
+          jsonDecode(response.body) as Map<String, dynamic>;
 
       final statsjson = body['stats'] as List<dynamic>;
       final typesjson = body['types'] as List<dynamic>;
@@ -43,7 +49,12 @@ class PokemonService {
       final movesjson = body['moves'] as List<dynamic>;
 
       pokemon.id = body['id'] as int;
-      pokemon.urlimage = body['sprites']['other']['home']['front_default'] as String;
+      pokemon.urlimage =
+          body['sprites']['other']['home']['front_default'] as String;
+
+      pokemon.height = body['height'] as int;
+      pokemon.weight = body['weight'] as int;
+      pokemon.baseExperience = body['base_experience'] as int;
 
       pokemon.stats = getstatsfromjson(statsjson);
       pokemon.types = gettypesfromjson(typesjson);
@@ -51,10 +62,12 @@ class PokemonService {
       pokemon.moves = getmovesfromjson(movesjson);
 
       print("Datos del Pokemon Cargados!");
-      // print(pokemon.stats);
-      // print(pokemon.types);
-      // print(pokemon.abilities);
-      // print(pokemon.moves);
+      //print(pokemon.stats);
+      //print(pokemon.types);
+      //print(pokemon.abilities);
+      //print(pokemon.moves);
+      //print(pokemon.height);
+      //print(pokemon.weight);
     } else {
       throw Exception('Failed to load the Pokemon: ${pokemon.name}');
     }

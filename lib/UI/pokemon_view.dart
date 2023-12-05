@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:pokedex/Models/pokemon.dart';
+import 'package:pokedex/Utils/pokemon-favorites.dart';
 import 'package:pokedex/Utils/pokemon-services.dart';
 
 class PokemonView extends StatefulWidget {
@@ -14,9 +15,17 @@ class PokemonView extends StatefulWidget {
 
 class _PokemonViewState extends State<PokemonView> {
   final PokemonService pokemonService = PokemonService();
+  ListPokemonFavorites pokemonFavorites = ListPokemonFavorites();
+  int baseExp = 0;
+  int height = 0;
+  int weight = 0;
   List<String> tipos = [];
+  List<String> habilidades = [];
+  List<String> movimientos = [];
   Map<String, int> estadisticas = {};
+
   Color colorBase = Colors.red;
+  Color colorAux = Colors.grey;
 
   @override
   void initState() {
@@ -29,12 +38,25 @@ class _PokemonViewState extends State<PokemonView> {
       await pokemonService.fetchPokemon(widget.pokemon);
       setState(() {
         tipos = widget.pokemon.types.values.toList();
+        habilidades = widget.pokemon.abilities.keys.toList();
         estadisticas = widget.pokemon.stats;
+        movimientos = widget.pokemon.moves.values.toList();
+        baseExp = widget.pokemon.baseExperience;
+        weight = widget.pokemon.weight;
+        height = widget.pokemon.height;
       });
     } catch (e) {
       // ignore: avoid_print
       print(e);
+    } finally {
+      print(movimientos);
     }
+  }
+
+  void cambiarBg(Color nuevoColor) {
+    setState(() {
+      colorBase = nuevoColor; // Cambiar a otro color
+    });
   }
 
   // DICCIONARIO DE TRADUCCIONES DE LOS TIPOS
@@ -69,14 +91,46 @@ class _PokemonViewState extends State<PokemonView> {
     return tipoEnIngles;
   }
 
+  // DICCIONARIO DE TRADUCCIONES DE LAS HABILIDADES
+  String traducirHabilidad(String habilidadEnIngles) {
+    Map<String, String> traducciones = {
+      'overgrow': 'Espesura',
+      'chlorophyll': 'Clorofila',
+      'blaze': 'Mar Llamas',
+      'torrent': 'Torrente',
+      'swarm': 'Enjambre',
+      'static': 'Estática',
+      'keen eye': 'Vista Lince',
+      'levitate': 'Levitación',
+      'intimidate': 'Intimidación',
+      'sand veil': 'Velo Arena',
+      'swift swim': 'Nado Rápido',
+      'run Away': 'Fuga',
+      'insomnia': 'Insomnio',
+      'immunity': 'Inmunidad',
+      'magnet pull': 'Imán',
+      'trace': 'Rastro',
+      'huge power': 'Potencia',
+      'synchronize': 'Sincronía',
+    };
+
+    // Verifica si existe una traducción para el tipo en inglés
+    if (traducciones.containsKey(habilidadEnIngles)) {
+      return traducciones[habilidadEnIngles]!;
+    }
+
+    // Si no hay traducción, se devuelve el mismo tipo
+    return habilidadEnIngles;
+  }
+
   // DICCIONARIO DE TRADUCCIONES DE LAS ESTADISTICAS
   String traducirEstadistica(String stat) {
     Map<String, String> traduccionEstadistica = {
       'hp': 'Vida',
       'attack': 'Ataque',
       'defense': 'Defensa',
-      'special-attack': 'Atq Especial',
-      'special-defense': 'Df Especial',
+      'special-attack': 'Atq Esp',
+      'special-defense': 'Df Esp',
       'speed': 'Velocidad',
     };
 
@@ -221,7 +275,11 @@ class _PokemonViewState extends State<PokemonView> {
                   Icons.favorite,
                   color: determineColorBasedOnBackground(colorBase),
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  pokemonFavorites.addFavorite(widget.pokemon);
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text('Pokemon Agregado a Favoritos!')));
+                },
               ),
             ],
           ),
@@ -247,19 +305,22 @@ class _PokemonViewState extends State<PokemonView> {
                             Padding(
                               padding: const EdgeInsets.only(
                                   top: 0, left: 50, right: 50),
-                              child: Image.network(
-                                widget.pokemon.urlimage,
-                                width: 200,
-                                height: 200,
-                                loadingBuilder: (BuildContext context,
-                                    Widget child,
-                                    ImageChunkEvent? loadingProgress) {
-                                  if (loadingProgress == null) {
-                                    return child;
-                                  } else {
-                                    return const CircularProgressIndicator();
-                                  }
-                                },
+                              child: Hero(
+                                tag: 'pokemon_image_${widget.pokemon.id}',
+                                child: Image.network(
+                                  widget.pokemon.urlimage,
+                                  width: 200,
+                                  height: 200,
+                                  loadingBuilder: (BuildContext context,
+                                      Widget child,
+                                      ImageChunkEvent? loadingProgress) {
+                                    if (loadingProgress == null) {
+                                      return child;
+                                    } else {
+                                      return const CircularProgressIndicator();
+                                    }
+                                  },
+                                ),
                               ),
                             ),
                           ],
@@ -269,7 +330,6 @@ class _PokemonViewState extends State<PokemonView> {
                   ],
                 ),
                 Container(
-                  height: MediaQuery.of(context).size.height / 1.5,
                   width: double.infinity,
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -289,8 +349,10 @@ class _PokemonViewState extends State<PokemonView> {
                   child: Column(
                     children: [
                       const SizedBox(
-                        height: 20, // Altura del espacio entre los widgets
+                        height: 20,
                       ),
+
+                      // CONTAINER DE TIPOS DEL POKEMON
                       SizedBox(
                         height: 40,
                         child: Center(
@@ -301,7 +363,9 @@ class _PokemonViewState extends State<PokemonView> {
                               Color colorTipo =
                                   obtenerColorPorTipo(tipoEnIngles);
                               Icon tipoIcon = determinarIconoTipo(tipoEnIngles);
-                              colorBase = colorTipo;
+                              colorAux = colorTipo;
+
+                              cambiarBg(colorTipo);
 
                               return Container(
                                 margin:
@@ -310,6 +374,15 @@ class _PokemonViewState extends State<PokemonView> {
                                 decoration: BoxDecoration(
                                   color: colorTipo,
                                   borderRadius: BorderRadius.circular(8),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.withOpacity(0.3),
+                                      spreadRadius: 2,
+                                      blurRadius: 5,
+                                      offset: const Offset(
+                                          0, 1), // changes position of shadow
+                                    ),
+                                  ],
                                 ),
                                 child: Row(
                                   children: [
@@ -336,8 +409,172 @@ class _PokemonViewState extends State<PokemonView> {
                           ),
                         ),
                       ),
+
                       const SizedBox(
-                        height: 20, // Altura del espacio entre los widgets
+                        height: 20,
+                      ),
+
+                      // DATOS GENERALES DEL POKEMON
+                      Column(
+                        children: [
+                          const Row(
+                            mainAxisAlignment: MainAxisAlignment
+                                .center, // Alineación horizontal al centro
+                            children: <Widget>[
+                              Padding(
+                                padding: EdgeInsets.only(bottom: 20.0),
+                                child: Text(
+                                  'Datos Generales',
+                                  style: TextStyle(
+                                      fontSize: 20.0,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ],
+                          ),
+
+                          // PRIMER CONJUNTO DE DATOS
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 10.0),
+                            child: Row(
+                              children: <Widget>[
+                                Expanded(
+                                  child: Row(
+                                    children: <Widget>[
+                                      const Text(
+                                        'Altura:',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.blueGrey),
+                                      ),
+                                      const SizedBox(width: 5.0),
+                                      Text(
+                                        "$height",
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                // Cuarto conjunto de información
+                                Expanded(
+                                  child: Row(
+                                    children: <Widget>[
+                                      const Text(
+                                        'Peso:',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.blueGrey),
+                                      ),
+                                      const SizedBox(width: 5.0),
+                                      Text(
+                                        "$weight",
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          // SEGUNDO CONJUNTO DE DATOS
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10.0, vertical: 15.0),
+                            child: Row(
+                              children: <Widget>[
+                                Expanded(
+                                  child: Row(
+                                    children: <Widget>[
+                                      const Text(
+                                        'Exp Base:',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.blueGrey),
+                                      ),
+                                      const SizedBox(width: 5.0),
+                                      Text(
+                                        "$baseExp",
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                // Cuarto conjunto de información
+                                Expanded(
+                                  child: Row(
+                                    children: <Widget>[
+                                      const Text(
+                                        'ID Pokemon:',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.blueGrey),
+                                      ),
+                                      const SizedBox(width: 5.0),
+                                      Text(
+                                        "#${widget.pokemon.id}",
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          // HABILIDADES
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 10.0),
+                            child: Row(
+                              children: [
+                                const Text(
+                                  'Habilidades:',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.blueGrey),
+                                ),
+                                const SizedBox(width: 5.0),
+                                // Iterar y mostrar habilidades
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: habilidades.map((habilidad) {
+                                    String habilidadTraducida =
+                                        traducirHabilidad(habilidad);
+                                    return Text("$habilidadTraducida ",
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold));
+                                  }).toList(),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(
+                        height: 30,
+                      ),
+
+                      // ESTADISTICAS
+                      const Row(
+                        mainAxisAlignment: MainAxisAlignment
+                            .center, // Alineación horizontal al centro
+                        children: <Widget>[
+                          Padding(
+                            padding: EdgeInsets.only(bottom: 20.0),
+                            child: Text(
+                              'Estadisticas',
+                              style: TextStyle(
+                                  fontSize: 20.0, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ],
                       ),
                       Column(
                         children: estadisticas.entries.map((entry) {
@@ -350,12 +587,22 @@ class _PokemonViewState extends State<PokemonView> {
                                 vertical: 8.0, horizontal: 10.0),
                             child: Row(
                               children: [
-                                Text(
-                                  estadisticaTipo,
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold),
+                                Container(
+                                  width: 70.0,
+                                  child: Text(
+                                    estadisticaTipo,
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold),
+                                  ),
                                 ),
-                                SizedBox(width: 10),
+                                const SizedBox(width: 10),
+                                Text(
+                                  '$value',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: determineColorBasedOnValue(value)),
+                                ),
+                                const SizedBox(width: 10),
                                 Expanded(
                                   child: LinearProgressIndicator(
                                     value: value / 200,
@@ -365,19 +612,48 @@ class _PokemonViewState extends State<PokemonView> {
                                     ),
                                   ),
                                 ),
-                                const SizedBox(width: 10),
-                                Text(
-                                  '$value',
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold),
-                                ),
                               ],
                             ),
                           );
                         }).toList(),
                       ),
+
                       const SizedBox(
-                        height: 15,
+                        height: 30,
+                      ),
+
+                      const Row(
+                        mainAxisAlignment: MainAxisAlignment
+                            .center, // Alineación horizontal al centro
+                        children: <Widget>[
+                          Padding(
+                            padding: EdgeInsets.only(bottom: 20.0),
+                            child: Text(
+                              'Movimientos',
+                              style: TextStyle(
+                                  fontSize: 20.0, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ],
+                      ),
+                      ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: movimientos.length,
+                        itemBuilder: (context, index) {
+                          return Column(
+                            children: [
+                              ListTile(
+                                title: Text(
+                                  movimientos[index],
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                trailing: Text('#${index + 1}'),
+                              ),
+                              const Divider(height: 1, color: Colors.grey),
+                            ],
+                          );
+                        },
                       ),
                     ],
                   ),
