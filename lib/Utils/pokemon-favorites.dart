@@ -92,13 +92,13 @@ class ListPokemonFavorites {
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setString('favorites', json.encode(favorites));
-      
+
       jsonFavorites = favorites;
       print("FAVS REMOVE: $jsonFavorites");
-
     } catch (e) {
       // ignore: avoid_print
       print(e);
     }
   }
+
 }

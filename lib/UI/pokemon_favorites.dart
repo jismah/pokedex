@@ -54,6 +54,30 @@ class PokemonFavorites extends StatefulWidget {
 class _PokemonFavoritesState extends State<PokemonFavorites> {
   ListPokemonFavorites pokemonFavorites = ListPokemonFavorites();
   List<Pokemon> pokemonListAll = [];
+  List<String> allTypes = [
+    "All",
+    "Normal",
+    "Fighting",
+    "Flying",
+    "Poison",
+    "Ground",
+    "Rock",
+    "Bug",
+    "Ghost",
+    "Steel",
+    "Fire",
+    "Water",
+    "Grass",
+    "Electric",
+    "Psychic",
+    "Ice",
+    "Dragon",
+    "Dark",
+    "Fairy",
+    "Unknown",
+    "Shadow"
+  ];
+  String selectedType = 'All'; // Tipo por defecto
 
   @override
   void initState() {
@@ -62,42 +86,154 @@ class _PokemonFavoritesState extends State<PokemonFavorites> {
     super.initState();
   }
 
+  // COLORES DEPENDIENDO DEL TIPO DEL POKEMON
+  Color obtenerColorPorTipo(String tipoEnIngles) {
+    switch (tipoEnIngles) {
+      case 'Fire':
+        return Colors.red;
+      case 'Water':
+        return Colors.blue;
+      case 'Grass':
+        return Colors.green;
+      case 'Poison':
+        return Colors.lightGreen;
+      case 'Normal':
+        return Colors.blueAccent;
+      case 'Electric':
+        return Colors.yellow;
+      case 'Ice':
+        return Colors.lightBlue;
+      case 'Fighting':
+        return Colors.orange;
+      case 'Ground':
+        return Colors.brown;
+      case 'Flying':
+        return Colors.lightBlueAccent;
+      case 'Psychic':
+        return Colors.pink;
+      case 'Bug':
+        return Colors.green.shade800;
+      case 'Rock':
+        return Colors.grey;
+      case 'Ghost':
+        return Colors.lightBlueAccent;
+      case 'Dragon':
+        return Colors.pink;
+      case 'Dark':
+        return Colors.green.shade800;
+      case 'Steel':
+        return Colors.pink;
+      case 'Fairy':
+        return Colors.green.shade800;
+
+      default:
+        return Colors.grey;
+    }
+  }
+
+  Icon determinarIconoTipo(String tipoEnIngles) {
+    Map<String, IconData> iconosPorTipo = {
+      'Fire': Icons.whatshot,
+      'Water': Icons.water_drop,
+      'Grass': Icons.grass,
+      'Normal': Icons.arrow_drop_down,
+      'Electric': Icons.electric_bolt,
+      'Ice': Icons.ac_unit,
+      'Fighting': Icons.dry,
+      'Poison': Icons.coronavirus,
+      'Bug': Icons.emoji_nature,
+      'Ground': Icons.volcano,
+      'Flying': Icons.air,
+      'Psychic': Icons.psychology,
+      'Rock': Icons.public,
+      'Ghost': Icons.help_center,
+      'Dragon': Icons.local_fire_department,
+      'Dark': Icons.nights_stay,
+      'Steel': Icons.smart_toy,
+      'Fairy': Icons.auto_fix_normal,
+    };
+
+    if (iconosPorTipo.containsKey(tipoEnIngles)) {
+      return Icon(iconosPorTipo[tipoEnIngles], color: obtenerColorPorTipo(tipoEnIngles));
+    }
+
+    return const Icon(Icons.arrow_drop_down);
+  }
+
   @override
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // Padding(
-        //   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
-        //   child: TextField(
-        //     onChanged: (value) {
-        //       filterSearchResults(value);
-        //     },
-        //     controller: searchController,
-        //     decoration: InputDecoration(
-        //       enabledBorder: OutlineInputBorder(
-        //         borderSide: const BorderSide(color: Colors.black38, width: 1.5),
-        //         borderRadius: BorderRadius.circular(10.0),
-        //       ),
-        //       contentPadding: const EdgeInsets.symmetric(vertical: 15),
-        //       prefixIcon: const Icon(
-        //         Icons.search,
-        //         size: 30.0,
-        //       ),
-        //       border: OutlineInputBorder(
-        //         borderRadius: BorderRadius.circular(10.0),
-        //       ),
-        //       hintText: 'Buscar...',
-        //     ),
-        //   ),
-        // ),
+        DropdownButton<String>(
+          value: selectedType,
+          icon: determinarIconoTipo(selectedType),
+          dropdownColor: Colors.white,
+          iconSize: 22,
+          elevation: 16,
+          style: TextStyle(color: Colors.black),
+          underline: Container(
+            height: 2,
+            color: obtenerColorPorTipo(selectedType), // Color de la línea debajo del botón
+          ),
+          items: allTypes.map((String type) {
+            return DropdownMenuItem<String>(
+              value: type,
+              child: Text(type),
+            );
+          }).toList(),
+          onChanged: (newType) {
+            setState(() {
+              selectedType = newType!;
+              _filterPokemonsByType(newType);
+            });
+          },
+          //   items: allTypes.map<DropdownMenuItem<String>>((String value) {
+          //     return DropdownMenuItem<String>(
+          //       value: value,
+          //       child: Row(
+          //         children: [
+          //           determinarIconoTipo(value), // Tu primer icono
+          //           const SizedBox(width: 8), // Espacio entre el icono y el texto
+          //           Text(value), // Texto de cada opción
+          //           const Spacer(), // Espacio flexible para empujar el siguiente ícono al extremo derecho
+          //           const Icon(Icons.arrow_drop_down), // Tu segundo icono arrow_drop_down
+          //         ],
+          //       ),
+          //     );
+          //   }).toList(),
+          // ),
+          // Padding(
+          //   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+          //   child: TextField(
+          //     onChanged: (value) {
+          //       filterSearchResults(value);
+          //     },
+          //     controller: searchController,
+          //     decoration: InputDecoration(
+          //       enabledBorder: OutlineInputBorder(
+          //         borderSide: const BorderSide(color: Colors.black38, width: 1.5),
+          //         borderRadius: BorderRadius.circular(10.0),
+          //       ),
+          //       contentPadding: const EdgeInsets.symmetric(vertical: 15),
+          //       prefixIcon: const Icon(
+          //         Icons.search,
+          //         size: 30.0,
+          //       ),
+          //       border: OutlineInputBorder(
+          //         borderRadius: BorderRadius.circular(10.0),
+          //       ),
+          //       hintText: 'Buscar...',
+          //     ),
+          //   ),
+        ),
         Expanded(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
             child: GridView.builder(
                 gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
                     maxCrossAxisExtent: 200, childAspectRatio: 3 / 4, crossAxisSpacing: 2, mainAxisSpacing: 5),
-                itemCount: pokemonFavorites.getPokemonFavorites().length,
+                itemCount: pokemonListAll.length,
                 itemBuilder: (BuildContext ctx, index) {
                   final Pokemon pokemon = pokemonListAll[index];
 
@@ -216,13 +352,30 @@ class _PokemonFavoritesState extends State<PokemonFavorites> {
   void _removeFavorite(Pokemon pokemon) async {
     try {
       pokemonFavorites.deletePokemon(pokemon);
-      pokemonListAll = pokemonFavorites.getPokemonFavorites();
-      setState(() {
-        // Actualiza el estado con la lista de Pokémon obtenida
-        pokemonListAll = pokemonListAll;
-      });
+      // pokemonListAll = pokemonFavorites.getPokemonFavorites();
+      // setState(() {
+      //   // Actualiza el estado con la lista de Pokémon obtenida
+      //   pokemonListAll = pokemonListAll;
+      // });
+      _filterPokemonsByType(selectedType);
     } catch (e) {
       print('Error al obtener la lista de Pokémon: $e');
     }
+  }
+
+  void _filterPokemonsByType(String newType) {
+    List<Pokemon> filteredPokemons = [];
+
+    if (newType == 'All') {
+      filteredPokemons = pokemonFavorites.getPokemonFavorites();
+    } else {
+      pokemonListAll = pokemonFavorites.getPokemonFavorites();
+      filteredPokemons = pokemonListAll.where((pokemon) => pokemon.types.containsValue(newType.toLowerCase())).toList();
+      print("filteredPokemons: $filteredPokemons");
+    }
+
+    setState(() {
+      pokemonListAll = filteredPokemons;
+    });
   }
 }
