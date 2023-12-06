@@ -15,16 +15,16 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Pokédex',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25)),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.red.shade600,
-        elevation: 0,
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30)),
+        backgroundColor: Colors.red,
+        foregroundColor: Colors.white,
+        elevation: 1,
         toolbarHeight: 70,
         actions: <Widget>[
           IconButton(
-            icon: Icon(
+            icon: const Icon(
               Icons.favorite,
-              color: Colors.red.shade600,
+              color: Colors.white,
             ),
             onPressed: () {
               Navigator.pushNamed(context, 'favorites');
@@ -97,7 +97,7 @@ class _HomePageContentState extends State<HomePageContent> {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
           child: TextField(
             onChanged: (value) {
               filterSearchResults(value);

@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:pokedex/Models/pokemon.dart';
@@ -76,20 +74,8 @@ class _PokemonViewState extends State<PokemonView> {
   // TIRA UN SCREENSHOT DEL POKEMON Y LO COMPARTE
   Future<void> captureAndShare() async {
     // Capturar la imagen y guardarla como archivo temporal
-
-    Uint8List? image = await screenshotController.capture();
-
-    if (image != null) {
-      // Compartir la captura de pantalla
-      try {
-        await Share.shareXFiles([XFile('screenshot.png')],
-            text: '¡Mira esta captura de pantalla!');
-      } catch (e) {
-        print(e);
-      }
-    } else {
-      const SnackBar(content: Text('Error al Compartir!'));
-    }
+    Share.share(
+        '¡Hola, te comparto mi pokemon ${widget.pokemon.name}, su id es ${widget.pokemon.id} y su imagen es ${widget.pokemon.urlimage}');
   }
 
   // DICCIONARIO DE TRADUCCIONES DE LOS TIPOS
@@ -646,7 +632,7 @@ class _PokemonViewState extends State<PokemonView> {
                               const SizedBox(width: 10),
                               Expanded(
                                 child: LinearProgressIndicator(
-                                  value: value / 200,
+                                  value: value / 250,
                                   backgroundColor: Colors.grey,
                                   valueColor: AlwaysStoppedAnimation<Color>(
                                     determineColorBasedOnValue(value),
