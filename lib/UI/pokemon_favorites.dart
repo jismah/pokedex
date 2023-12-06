@@ -172,7 +172,7 @@ class _PokemonFavoritesState extends State<PokemonFavorites> {
             children: [
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
                   child: DropdownButtonFormField<String>(
                     value: selectedType,
                     icon: determinarIconoTipo(selectedType),
