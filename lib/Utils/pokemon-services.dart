@@ -20,16 +20,38 @@ class PokemonService {
 
       ///Para todos los pokemones extraemos el ID de la url y creamos la url de la imagen
       ///para no tener que hacer otra petición para extraer el ID y la imagen.
+
       for (var pokemon in lista) {
         pokemon.id = findId(pokemon.url);
-        pokemon.urlimage = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/${pokemon.id}.png';
+        try {
+          final imageUrl =
+              'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/${pokemon.id}.png';
+
+          if (pokemon.id > 900) {
+            pokemon.urlimage =
+                'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.id}.png';
+            /*  pokemon.urlimage =
+                'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/${pokemon.id}.png'; */
+          } else {
+            pokemon.urlimage = imageUrl;
+          }
+        } catch (e) {
+          print(e);
+        }
       }
+
       nextUrl = body['nextUrl'];
       PokemonService.misPokemons.addAll(lista);
       return lista;
     } else {
       throw Exception('Failed to load the Pokemons list');
     }
+  }
+
+  // Función para verificar la validez de la URL de la imagen
+  Future<bool> checkImageUrl(String imageUrl) async {
+    final urlResponse = await http.head(Uri.parse(imageUrl));
+    return urlResponse.statusCode == 200;
   }
 
   ///Funcion que busca los detalles de un pokemon dado

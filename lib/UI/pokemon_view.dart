@@ -50,13 +50,19 @@ class _PokemonViewState extends State<PokemonView> {
       // ignore: avoid_print
       print(e);
     } finally {
-      //print(movimientos);
+/*       print(tipos);
+      print(habilidades);
+      print(estadisticas);
+      print(baseExp);
+      print(movimientos); */
+      await Future.delayed(const Duration(milliseconds: 150));
+      refreshBg();
     }
   }
 
-  void cambiarBg(Color nuevoColor) {
+  void refreshBg() {
     setState(() {
-      colorBase = nuevoColor; // Cambiar a otro color
+      colorBase = colorAux; // Cambiar a otro color
     });
   }
 
@@ -287,6 +293,15 @@ class _PokemonViewState extends State<PokemonView> {
                 );
               },
             ),
+            IconButton(
+              icon: Icon(
+                Icons.share,
+                color: determineColorBasedOnBackground(colorBase),
+              ),
+              onPressed: () {
+                refreshBg();
+              },
+            ),
           ],
         ),
         body: SingleChildScrollView(
@@ -369,8 +384,6 @@ class _PokemonViewState extends State<PokemonView> {
                             Color colorTipo = obtenerColorPorTipo(tipoEnIngles);
                             Icon tipoIcon = determinarIconoTipo(tipoEnIngles);
                             colorAux = colorTipo;
-
-                            cambiarBg(colorTipo);
 
                             return Container(
                               margin: const EdgeInsets.symmetric(horizontal: 4),
