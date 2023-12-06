@@ -28,6 +28,7 @@ class _PokemonViewState extends State<PokemonView> {
   List<String> movimientos = [];
   Map<String, int> estadisticas = {};
 
+  bool isIconChanged = false;
   Color colorBase = Colors.red;
   Color colorAux = Colors.grey;
 
@@ -35,6 +36,7 @@ class _PokemonViewState extends State<PokemonView> {
   void initState() {
     super.initState();
     loadPokemon();
+    isIconChanged = widget.pokemon.isFavorit;
   }
 
   // CARGA TODOS LOS DATOS DEL POKEMON
@@ -281,13 +283,21 @@ class _PokemonViewState extends State<PokemonView> {
           actions: <Widget>[
             IconButton(
               icon: Icon(
-                Icons.favorite,
+                widget.pokemon.isFavorit ? Icons.favorite : Icons.favorite_border,
                 color: determineColorBasedOnBackground(colorBase),
               ),
               onPressed: () {
-                pokemonFavorites.addFavorite(widget.pokemon);
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                    content: Text('Pokemon Agregado a Favoritos!')));
+                if (widget.pokemon.isFavorit) {
+                  pokemonFavorites.deletePokemon(widget.pokemon);
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Pokemon Removido de Favoritos!')));
+                } else {
+                  pokemonFavorites.addFavorite(widget.pokemon);
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Pokemon Agregado a Favoritos!')));
+                }
+                setState(() {
+                  // isIconChanged = !isIconChanged;
+                  widget.pokemon.isFavorit = !widget.pokemon.isFavorit;
+                });
               },
             ),
             IconButton(
@@ -299,8 +309,7 @@ class _PokemonViewState extends State<PokemonView> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) =>
-                        EvolucionesUI(pokemon: widget.pokemon),
+                    builder: (context) => EvolucionesUI(pokemon: widget.pokemon),
                   ),
                 );
               },
@@ -336,17 +345,14 @@ class _PokemonViewState extends State<PokemonView> {
                       child: Column(
                         children: [
                           Padding(
-                            padding: const EdgeInsets.only(
-                                top: 0, left: 50, right: 50),
+                            padding: const EdgeInsets.only(top: 0, left: 50, right: 50),
                             child: Hero(
                               tag: 'pokemon_image_${widget.pokemon.id}',
                               child: Image.network(
                                 widget.pokemon.urlimage,
                                 width: 200,
                                 height: 200,
-                                loadingBuilder: (BuildContext context,
-                                    Widget child,
-                                    ImageChunkEvent? loadingProgress) {
+                                loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
                                   if (loadingProgress == null) {
                                     return child;
                                   } else {
@@ -408,8 +414,7 @@ class _PokemonViewState extends State<PokemonView> {
                                     color: Colors.grey.withOpacity(0.3),
                                     spreadRadius: 2,
                                     blurRadius: 5,
-                                    offset: const Offset(
-                                        0, 1), // changes position of shadow
+                                    offset: const Offset(0, 1), // changes position of shadow
                                   ),
                                 ],
                               ),
@@ -417,17 +422,13 @@ class _PokemonViewState extends State<PokemonView> {
                                 children: [
                                   Icon(
                                     tipoIcon.icon,
-                                    color: determineColorBasedOnBackground(
-                                        colorTipo),
+                                    color: determineColorBasedOnBackground(colorTipo),
                                   ),
-                                  const SizedBox(
-                                      width:
-                                          5), // Espacio entre el icono y el texto
+                                  const SizedBox(width: 5), // Espacio entre el icono y el texto
                                   Text(
                                     tipoTraducido,
                                     style: TextStyle(
-                                      color: determineColorBasedOnBackground(
-                                          colorTipo),
+                                      color: determineColorBasedOnBackground(colorTipo),
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -447,16 +448,13 @@ class _PokemonViewState extends State<PokemonView> {
                     Column(
                       children: [
                         const Row(
-                          mainAxisAlignment: MainAxisAlignment
-                              .center, // Alineación horizontal al centro
+                          mainAxisAlignment: MainAxisAlignment.center, // Alineación horizontal al centro
                           children: <Widget>[
                             Padding(
                               padding: EdgeInsets.only(bottom: 20.0),
                               child: Text(
                                 'Datos Generales',
-                                style: TextStyle(
-                                    fontSize: 20.0,
-                                    fontWeight: FontWeight.bold),
+                                style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
                               ),
                             ),
                           ],
@@ -472,15 +470,12 @@ class _PokemonViewState extends State<PokemonView> {
                                   children: <Widget>[
                                     const Text(
                                       'Altura:',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.blueGrey),
+                                      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blueGrey),
                                     ),
                                     const SizedBox(width: 5.0),
                                     Text(
                                       "$height",
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold),
+                                      style: const TextStyle(fontWeight: FontWeight.bold),
                                     ),
                                   ],
                                 ),
@@ -491,15 +486,12 @@ class _PokemonViewState extends State<PokemonView> {
                                   children: <Widget>[
                                     const Text(
                                       'Peso:',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.blueGrey),
+                                      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blueGrey),
                                     ),
                                     const SizedBox(width: 5.0),
                                     Text(
                                       "$weight",
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold),
+                                      style: const TextStyle(fontWeight: FontWeight.bold),
                                     ),
                                   ],
                                 ),
@@ -510,8 +502,7 @@ class _PokemonViewState extends State<PokemonView> {
 
                         // SEGUNDO CONJUNTO DE DATOS
                         Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 10.0, vertical: 15.0),
+                          padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
                           child: Row(
                             children: <Widget>[
                               Expanded(
@@ -519,15 +510,12 @@ class _PokemonViewState extends State<PokemonView> {
                                   children: <Widget>[
                                     const Text(
                                       'Exp Base:',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.blueGrey),
+                                      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blueGrey),
                                     ),
                                     const SizedBox(width: 5.0),
                                     Text(
                                       "$baseExp",
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold),
+                                      style: const TextStyle(fontWeight: FontWeight.bold),
                                     ),
                                   ],
                                 ),
@@ -538,15 +526,12 @@ class _PokemonViewState extends State<PokemonView> {
                                   children: <Widget>[
                                     const Text(
                                       'ID Pokemon:',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.blueGrey),
+                                      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blueGrey),
                                     ),
                                     const SizedBox(width: 5.0),
                                     Text(
                                       "#${widget.pokemon.id}",
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold),
+                                      style: const TextStyle(fontWeight: FontWeight.bold),
                                     ),
                                   ],
                                 ),
@@ -562,20 +547,15 @@ class _PokemonViewState extends State<PokemonView> {
                             children: [
                               const Text(
                                 'Habilidades:',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.blueGrey),
+                                style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blueGrey),
                               ),
                               const SizedBox(width: 5.0),
                               // Iterar y mostrar habilidades
                               Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: habilidades.map((habilidad) {
-                                  String habilidadTraducida =
-                                      traducirHabilidad(habilidad);
-                                  return Text("$habilidadTraducida ",
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold));
+                                  String habilidadTraducida = traducirHabilidad(habilidad);
+                                  return Text("$habilidadTraducida ", style: const TextStyle(fontWeight: FontWeight.bold));
                                 }).toList(),
                               ),
                             ],
@@ -590,15 +570,13 @@ class _PokemonViewState extends State<PokemonView> {
 
                     // ESTADISTICAS
                     const Row(
-                      mainAxisAlignment: MainAxisAlignment
-                          .center, // Alineación horizontal al centro
+                      mainAxisAlignment: MainAxisAlignment.center, // Alineación horizontal al centro
                       children: <Widget>[
                         Padding(
                           padding: EdgeInsets.only(bottom: 20.0),
                           child: Text(
                             'Estadisticas',
-                            style: TextStyle(
-                                fontSize: 20.0, fontWeight: FontWeight.bold),
+                            style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
                           ),
                         ),
                       ],
@@ -610,24 +588,20 @@ class _PokemonViewState extends State<PokemonView> {
                         String estadisticaTipo = traducirEstadistica(stat);
 
                         return Padding(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 8.0, horizontal: 10.0),
+                          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 10.0),
                           child: Row(
                             children: [
                               Container(
                                 width: 70.0,
                                 child: Text(
                                   estadisticaTipo,
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold),
+                                  style: const TextStyle(fontWeight: FontWeight.bold),
                                 ),
                               ),
                               const SizedBox(width: 10),
                               Text(
                                 '$value',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: determineColorBasedOnValue(value)),
+                                style: TextStyle(fontWeight: FontWeight.bold, color: determineColorBasedOnValue(value)),
                               ),
                               const SizedBox(width: 10),
                               Expanded(
@@ -650,15 +624,13 @@ class _PokemonViewState extends State<PokemonView> {
                     ),
 
                     const Row(
-                      mainAxisAlignment: MainAxisAlignment
-                          .center, // Alineación horizontal al centro
+                      mainAxisAlignment: MainAxisAlignment.center, // Alineación horizontal al centro
                       children: <Widget>[
                         Padding(
                           padding: EdgeInsets.only(bottom: 20.0),
                           child: Text(
                             'Movimientos',
-                            style: TextStyle(
-                                fontSize: 20.0, fontWeight: FontWeight.bold),
+                            style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
                           ),
                         ),
                       ],
@@ -672,8 +644,7 @@ class _PokemonViewState extends State<PokemonView> {
                             ListTile(
                               title: Text(
                                 movimientos[index],
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold),
+                                style: const TextStyle(fontWeight: FontWeight.bold),
                               ),
                               trailing: Text('#${index + 1}'),
                             ),

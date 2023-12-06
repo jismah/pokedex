@@ -23,13 +23,12 @@ class PokemonService {
 
       for (var pokemon in lista) {
         pokemon.id = findId(pokemon.url);
+        pokemon.isFavorit = false;
         try {
-          final imageUrl =
-              'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/${pokemon.id}.png';
+          final imageUrl = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/${pokemon.id}.png';
 
           if (pokemon.id > 900) {
-            pokemon.urlimage =
-                'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.id}.png';
+            pokemon.urlimage = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.id}.png';
             /*  pokemon.urlimage =
                 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/${pokemon.id}.png'; */
           } else {

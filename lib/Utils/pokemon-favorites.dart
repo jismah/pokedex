@@ -39,10 +39,11 @@ class ListPokemonFavorites {
   void addFavorite(Pokemon pokemon) async {
     try {
       await pokemonService.fetchPokemon(pokemon);
+      pokemon.isFavorit = true;
       List<String> types = pokemon.types.values.toList();
       // print(types);
 
-      Map<String, dynamic> jsonbase = {'id': pokemon.id, 'name': pokemon.name, 'url': pokemon.url, 'urlimage': pokemon.urlimage, 'types': types};
+      Map<String, dynamic> jsonbase = {'id': pokemon.id, 'name': pokemon.name, 'url': pokemon.url, 'urlimage': pokemon.urlimage, 'types': types, 'favorite' : pokemon.isFavorit};
       final String jsonString = jsonEncode(jsonbase);
       // print(jsonString);
       final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -90,6 +91,7 @@ class ListPokemonFavorites {
         }
       }
 
+      pokemon.isFavorit = true;
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setString('favorites', json.encode(favorites));
 
@@ -100,5 +102,4 @@ class ListPokemonFavorites {
       print(e);
     }
   }
-
 }
