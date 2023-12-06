@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pokedex/Models/pokemon.dart';
+import 'package:pokedex/UI/pokemon_view.dart';
 
 class EvolucionesUI extends StatefulWidget {
   final Pokemon pokemon;
@@ -141,66 +142,75 @@ Widget build(BuildContext context) {
               ),
             ],
           ),
-          SizedBox(
+           SizedBox(
             height: 500,
             child: ListView.builder(
               scrollDirection: Axis.vertical,
               itemCount: listPokemon.length,
               itemBuilder: (BuildContext context, int index) {
                 Pokemon pokemon = listPokemon[index];
-                return SizedBox(
-                  width: MediaQuery.of(context).size.width,
-                  child: Card(
-                    color: Colors.white12,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Expanded(
-                          flex: 2,
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Image.network(
-                              pokemon.urlimage,
-                              width: 125,
-                              height: 125,
-                              loadingBuilder: (BuildContext context, Widget child,
-                                  ImageChunkEvent? loadingProgress) {
-                                if (loadingProgress == null) {
-                                  return child;
-                                } else {
-                                  return const CircularProgressIndicator();
-                                }
-                              },
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PokemonView(pokemon: pokemon),
+                      ),
+                    );
+                  },
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width,
+                    child: Card(
+                      color: Colors.white12,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Expanded(
+                            flex: 2,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Image.network(
+                                pokemon.urlimage,
+                                width: 125,
+                                height: 125,
+                                loadingBuilder: (BuildContext context, Widget child,
+                                    ImageChunkEvent? loadingProgress) {
+                                  if (loadingProgress == null) {
+                                    return child;
+                                  } else {
+                                    return const CircularProgressIndicator();
+                                  }
+                                },
+                              ),
                             ),
                           ),
-                        ),
-                        Expanded(
-                          flex: 3,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                pokemon.name,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 36,
-                                  // color: determineColorBasedOnBackground(colorAux),
-                                  color: determineColorBasedOnBackground(colorAux),
+                          Expanded(
+                            flex: 3,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  pokemon.name,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 36,
+                                    color: determineColorBasedOnBackground(colorAux),
+                                  ),
                                 ),
-                              ),
-                              SizedBox(height: 8),
-                              Text(
-                                'ID: #${pokemon.id}',
-                                style: TextStyle(
-                                  fontSize: 24,
-                                  color: determineColorBasedOnBackground(colorAux),
+                                SizedBox(height: 8),
+                                Text(
+                                  'ID: #${pokemon.id}',
+                                  style: TextStyle(
+                                    fontSize: 24,
+                                    color: determineColorBasedOnBackground(colorAux),
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 );
@@ -213,72 +223,4 @@ Widget build(BuildContext context) {
   );
 }
 
-
-  // @override
-  // Widget build(BuildContext context) {
-  //       return Scaffold(
-  //       backgroundColor: colorBase,
-  //       appBar: AppBar(
-  //         title: const Text(
-  //           "Evoluciones",
-  //           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
-  //         ),
-  //         backgroundColor: colorBase,
-  //         foregroundColor: determineColorBasedOnBackground(colorBase),
-  //         elevation: 0,
-  //       ),
-  //        body: SingleChildScrollView(
-  //         child: Column(
-  //           children: [
-  //             Row(
-  //               children: <Widget>[
-  //                 Expanded(
-  //                   child: Container(
-  //                     height: MediaQuery.of(context).size.height / 4,
-  //                     width: double.infinity,
-  //                     decoration: const BoxDecoration(
-  //                       image: DecorationImage(
-  //                         image: AssetImage('Assets/pokeballIcon.png'),
-  //                         fit: BoxFit.contain,
-  //                         alignment: Alignment.centerRight,
-  //                         opacity: 0.1,
-  //                       ),
-  //                     ),
-  //                     child: Column(
-  //                       children: [
-  //                         Padding(
-  //                           padding: const EdgeInsets.only(
-  //                               top: 0, left: 50, right: 50),
-  //                           child: Hero(
-  //                             tag: 'pokemon_image_${widget.pokemon.id}',
-  //                             child: Image.network(
-  //                               widget.pokemon.urlimage,
-  //                               width: 200,
-  //                               height: 200,
-  //                               loadingBuilder: (BuildContext context,
-  //                                   Widget child,
-  //                                   ImageChunkEvent? loadingProgress) {
-  //                                 if (loadingProgress == null) {
-  //                                   return child;
-  //                                 } else {
-  //                                   return const CircularProgressIndicator();
-  //                                 }
-  //                               },
-  //                             ),
-  //                           ),
-  //                         ),
-  //                       ],
-  //                     ),
-  //                   ),
-                    
-  //                 ),
-  //               ],
-  //             ),
-  //           ],//Aqui comienza
-
-  //         ),//AQui termina
-  //        )
-        
-  //       );
-  // }
 }
