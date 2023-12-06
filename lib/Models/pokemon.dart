@@ -19,12 +19,12 @@ class Pokemon extends PokemonService {
   late Map<int, String> types;
   late Map<String, bool> abilities;
   late Map<int, String> moves;
+  late List<Pokemon> nextGeneration;
 
   Pokemon({required this.name, required this.url});
 
   factory Pokemon.fromJson(Map<String, dynamic> json) {
-    Pokemon pokemon =
-        Pokemon(name: json['name'] as String, url: json['url'] as String);
+    Pokemon pokemon = Pokemon(name: json['name'] as String, url: json['url'] as String);
     // pokemon.name = pokemon.name[0].toUpperCase() + pokemon.name.substring(1); No se puede hacer esto porque al buscarlo tira un not found ya que el nombre esta en mayuscula
     if (json['urlimage'] != null) {
       pokemon.urlimage = json['urlimage'];
