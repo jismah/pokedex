@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:pokedex/Models/pokemon.dart';
+import 'package:pokedex/UI/evoluciones.dart';
 import 'package:pokedex/Utils/pokemon-favorites.dart';
 import 'package:pokedex/Utils/pokemon-services.dart';
 
@@ -49,7 +50,7 @@ class _PokemonViewState extends State<PokemonView> {
       // ignore: avoid_print
       print(e);
     } finally {
-      print(movimientos);
+      //print(movimientos);
     }
   }
 
@@ -249,418 +250,418 @@ class _PokemonViewState extends State<PokemonView> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Scaffold(
-          backgroundColor: colorBase,
-          appBar: AppBar(
-            title: Text(
-              widget.pokemon.name,
-              style:
-                  const TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
-            ),
-            bottom: PreferredSize(
-                preferredSize: Size.zero,
-                child: Text(
-                  "#${widget.pokemon.id}",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: determineColorBasedOnBackground(colorBase)),
-                )),
-            backgroundColor: colorBase,
-            foregroundColor: determineColorBasedOnBackground(colorBase),
-            elevation: 0,
-            actions: <Widget>[
-              IconButton(
-                icon: Icon(
-                  Icons.favorite,
-                  color: determineColorBasedOnBackground(colorBase),
-                ),
-                onPressed: () {
-                  pokemonFavorites.addFavorite(widget.pokemon);
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text('Pokemon Agregado a Favoritos!')));
-                },
-              ),
-            ],
+    return Scaffold(
+        backgroundColor: colorBase,
+        appBar: AppBar(
+          title: Text(
+            widget.pokemon.name,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
           ),
-          body: SingleChildScrollView(
-            child: Column(
-              children: [
-                Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: Container(
-                        height: MediaQuery.of(context).size.height / 4,
-                        width: double.infinity,
-                        decoration: const BoxDecoration(
-                          image: DecorationImage(
-                            image: AssetImage('Assets/pokeballIcon.png'),
-                            fit: BoxFit.contain,
-                            alignment: Alignment.centerRight,
-                            opacity: 0.1,
-                          ),
+          backgroundColor: colorBase,
+          foregroundColor: determineColorBasedOnBackground(colorBase),
+          elevation: 0,
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(
+                Icons.favorite,
+                color: determineColorBasedOnBackground(colorBase),
+              ),
+              onPressed: () {
+                pokemonFavorites.addFavorite(widget.pokemon);
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text('Pokemon Agregado a Favoritos!')));
+              },
+            ),
+            IconButton(
+              icon: Icon(
+                Icons.account_tree_rounded,
+                color: determineColorBasedOnBackground(colorBase),
+              ),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        EvolucionesUI(pokemon: widget.pokemon),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Container(
+                      height: MediaQuery.of(context).size.height / 4,
+                      width: double.infinity,
+                      decoration: const BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage('Assets/pokeballIcon.png'),
+                          fit: BoxFit.contain,
+                          alignment: Alignment.centerRight,
+                          opacity: 0.1,
                         ),
-                        child: Column(
-                          children: [
+                      ),
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(
+                                top: 0, left: 50, right: 50),
+                            child: Hero(
+                              tag: 'pokemon_image_${widget.pokemon.id}',
+                              child: Image.network(
+                                widget.pokemon.urlimage,
+                                width: 200,
+                                height: 200,
+                                loadingBuilder: (BuildContext context,
+                                    Widget child,
+                                    ImageChunkEvent? loadingProgress) {
+                                  if (loadingProgress == null) {
+                                    return child;
+                                  } else {
+                                    return const CircularProgressIndicator();
+                                  }
+                                },
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(50.0),
+                    topRight: Radius.circular(50.0),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.2),
+                      spreadRadius: 2,
+                      blurRadius: 3,
+                      offset: const Offset(0, 0),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  children: [
+                    const SizedBox(
+                      height: 20,
+                    ),
+
+                    // CONTAINER DE TIPOS DEL POKEMON
+                    SizedBox(
+                      height: 40,
+                      child: Center(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: tipos.map((tipoEnIngles) {
+                            String tipoTraducido = traducirTipo(tipoEnIngles);
+                            Color colorTipo = obtenerColorPorTipo(tipoEnIngles);
+                            Icon tipoIcon = determinarIconoTipo(tipoEnIngles);
+                            colorAux = colorTipo;
+
+                            cambiarBg(colorTipo);
+
+                            return Container(
+                              margin: const EdgeInsets.symmetric(horizontal: 4),
+                              padding: const EdgeInsets.all(6),
+                              decoration: BoxDecoration(
+                                color: colorTipo,
+                                borderRadius: BorderRadius.circular(8),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.3),
+                                    spreadRadius: 2,
+                                    blurRadius: 5,
+                                    offset: const Offset(
+                                        0, 1), // changes position of shadow
+                                  ),
+                                ],
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    tipoIcon.icon,
+                                    color: determineColorBasedOnBackground(
+                                        colorTipo),
+                                  ),
+                                  const SizedBox(
+                                      width:
+                                          5), // Espacio entre el icono y el texto
+                                  Text(
+                                    tipoTraducido,
+                                    style: TextStyle(
+                                      color: determineColorBasedOnBackground(
+                                          colorTipo),
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(
+                      height: 20,
+                    ),
+
+                    // DATOS GENERALES DEL POKEMON
+                    Column(
+                      children: [
+                        const Row(
+                          mainAxisAlignment: MainAxisAlignment
+                              .center, // Alineación horizontal al centro
+                          children: <Widget>[
                             Padding(
-                              padding: const EdgeInsets.only(
-                                  top: 0, left: 50, right: 50),
-                              child: Hero(
-                                tag: 'pokemon_image_${widget.pokemon.id}',
-                                child: Image.network(
-                                  widget.pokemon.urlimage,
-                                  width: 200,
-                                  height: 200,
-                                  loadingBuilder: (BuildContext context,
-                                      Widget child,
-                                      ImageChunkEvent? loadingProgress) {
-                                    if (loadingProgress == null) {
-                                      return child;
-                                    } else {
-                                      return const CircularProgressIndicator();
-                                    }
-                                  },
-                                ),
+                              padding: EdgeInsets.only(bottom: 20.0),
+                              child: Text(
+                                'Datos Generales',
+                                style: TextStyle(
+                                    fontSize: 20.0,
+                                    fontWeight: FontWeight.bold),
                               ),
                             ),
                           ],
                         ),
-                      ),
-                    ),
-                  ],
-                ),
-                Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(50.0),
-                      topRight: Radius.circular(50.0),
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.2),
-                        spreadRadius: 2,
-                        blurRadius: 3,
-                        offset: const Offset(0, 0),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    children: [
-                      const SizedBox(
-                        height: 20,
-                      ),
 
-                      // CONTAINER DE TIPOS DEL POKEMON
-                      SizedBox(
-                        height: 40,
-                        child: Center(
+                        // PRIMER CONJUNTO DE DATOS
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: tipos.map((tipoEnIngles) {
-                              String tipoTraducido = traducirTipo(tipoEnIngles);
-                              Color colorTipo =
-                                  obtenerColorPorTipo(tipoEnIngles);
-                              Icon tipoIcon = determinarIconoTipo(tipoEnIngles);
-                              colorAux = colorTipo;
-
-                              cambiarBg(colorTipo);
-
-                              return Container(
-                                margin:
-                                    const EdgeInsets.symmetric(horizontal: 4),
-                                padding: const EdgeInsets.all(6),
-                                decoration: BoxDecoration(
-                                  color: colorTipo,
-                                  borderRadius: BorderRadius.circular(8),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.grey.withOpacity(0.3),
-                                      spreadRadius: 2,
-                                      blurRadius: 5,
-                                      offset: const Offset(
-                                          0, 1), // changes position of shadow
-                                    ),
-                                  ],
-                                ),
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      tipoIcon.icon,
-                                      color: determineColorBasedOnBackground(
-                                          colorTipo),
-                                    ),
-                                    const SizedBox(
-                                        width:
-                                            5), // Espacio entre el icono y el texto
-                                    Text(
-                                      tipoTraducido,
-                                      style: TextStyle(
-                                        color: determineColorBasedOnBackground(
-                                            colorTipo),
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            }).toList(),
-                          ),
-                        ),
-                      ),
-
-                      const SizedBox(
-                        height: 20,
-                      ),
-
-                      // DATOS GENERALES DEL POKEMON
-                      Column(
-                        children: [
-                          const Row(
-                            mainAxisAlignment: MainAxisAlignment
-                                .center, // Alineación horizontal al centro
                             children: <Widget>[
-                              Padding(
-                                padding: EdgeInsets.only(bottom: 20.0),
-                                child: Text(
-                                  'Datos Generales',
-                                  style: TextStyle(
-                                      fontSize: 20.0,
-                                      fontWeight: FontWeight.bold),
+                              Expanded(
+                                child: Row(
+                                  children: <Widget>[
+                                    const Text(
+                                      'Altura:',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.blueGrey),
+                                    ),
+                                    const SizedBox(width: 5.0),
+                                    Text(
+                                      "$height",
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              // Cuarto conjunto de información
+                              Expanded(
+                                child: Row(
+                                  children: <Widget>[
+                                    const Text(
+                                      'Peso:',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.blueGrey),
+                                    ),
+                                    const SizedBox(width: 5.0),
+                                    Text(
+                                      "$weight",
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ],
                           ),
+                        ),
 
-                          // PRIMER CONJUNTO DE DATOS
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 10.0),
-                            child: Row(
-                              children: <Widget>[
-                                Expanded(
-                                  child: Row(
-                                    children: <Widget>[
-                                      const Text(
-                                        'Altura:',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.blueGrey),
-                                      ),
-                                      const SizedBox(width: 5.0),
-                                      Text(
-                                        "$height",
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                // Cuarto conjunto de información
-                                Expanded(
-                                  child: Row(
-                                    children: <Widget>[
-                                      const Text(
-                                        'Peso:',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.blueGrey),
-                                      ),
-                                      const SizedBox(width: 5.0),
-                                      Text(
-                                        "$weight",
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-
-                          // SEGUNDO CONJUNTO DE DATOS
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 10.0, vertical: 15.0),
-                            child: Row(
-                              children: <Widget>[
-                                Expanded(
-                                  child: Row(
-                                    children: <Widget>[
-                                      const Text(
-                                        'Exp Base:',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.blueGrey),
-                                      ),
-                                      const SizedBox(width: 5.0),
-                                      Text(
-                                        "$baseExp",
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                // Cuarto conjunto de información
-                                Expanded(
-                                  child: Row(
-                                    children: <Widget>[
-                                      const Text(
-                                        'ID Pokemon:',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.blueGrey),
-                                      ),
-                                      const SizedBox(width: 5.0),
-                                      Text(
-                                        "#${widget.pokemon.id}",
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-
-                          // HABILIDADES
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 10.0),
-                            child: Row(
-                              children: [
-                                const Text(
-                                  'Habilidades:',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.blueGrey),
-                                ),
-                                const SizedBox(width: 5.0),
-                                // Iterar y mostrar habilidades
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: habilidades.map((habilidad) {
-                                    String habilidadTraducida =
-                                        traducirHabilidad(habilidad);
-                                    return Text("$habilidadTraducida ",
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold));
-                                  }).toList(),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      const SizedBox(
-                        height: 30,
-                      ),
-
-                      // ESTADISTICAS
-                      const Row(
-                        mainAxisAlignment: MainAxisAlignment
-                            .center, // Alineación horizontal al centro
-                        children: <Widget>[
-                          Padding(
-                            padding: EdgeInsets.only(bottom: 20.0),
-                            child: Text(
-                              'Estadisticas',
-                              style: TextStyle(
-                                  fontSize: 20.0, fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Column(
-                        children: estadisticas.entries.map((entry) {
-                          String stat = entry.key;
-                          int value = entry.value;
-                          String estadisticaTipo = traducirEstadistica(stat);
-
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 8.0, horizontal: 10.0),
-                            child: Row(
-                              children: [
-                                Container(
-                                  width: 70.0,
-                                  child: Text(
-                                    estadisticaTipo,
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                                const SizedBox(width: 10),
-                                Text(
-                                  '$value',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: determineColorBasedOnValue(value)),
-                                ),
-                                const SizedBox(width: 10),
-                                Expanded(
-                                  child: LinearProgressIndicator(
-                                    value: value / 200,
-                                    backgroundColor: Colors.grey,
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                      determineColorBasedOnValue(value),
+                        // SEGUNDO CONJUNTO DE DATOS
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10.0, vertical: 15.0),
+                          child: Row(
+                            children: <Widget>[
+                              Expanded(
+                                child: Row(
+                                  children: <Widget>[
+                                    const Text(
+                                      'Exp Base:',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.blueGrey),
                                     ),
-                                  ),
+                                    const SizedBox(width: 5.0),
+                                    Text(
+                                      "$baseExp",
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                          );
-                        }).toList(),
-                      ),
-
-                      const SizedBox(
-                        height: 30,
-                      ),
-
-                      const Row(
-                        mainAxisAlignment: MainAxisAlignment
-                            .center, // Alineación horizontal al centro
-                        children: <Widget>[
-                          Padding(
-                            padding: EdgeInsets.only(bottom: 20.0),
-                            child: Text(
-                              'Movimientos',
-                              style: TextStyle(
-                                  fontSize: 20.0, fontWeight: FontWeight.bold),
-                            ),
+                              ),
+                              // Cuarto conjunto de información
+                              Expanded(
+                                child: Row(
+                                  children: <Widget>[
+                                    const Text(
+                                      'ID Pokemon:',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.blueGrey),
+                                    ),
+                                    const SizedBox(width: 5.0),
+                                    Text(
+                                      "#${widget.pokemon.id}",
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                      ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: movimientos.length,
-                        itemBuilder: (context, index) {
-                          return Column(
+                        ),
+
+                        // HABILIDADES
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                          child: Row(
                             children: [
-                              ListTile(
-                                title: Text(
-                                  movimientos[index],
+                              const Text(
+                                'Habilidades:',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.blueGrey),
+                              ),
+                              const SizedBox(width: 5.0),
+                              // Iterar y mostrar habilidades
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: habilidades.map((habilidad) {
+                                  String habilidadTraducida =
+                                      traducirHabilidad(habilidad);
+                                  return Text("$habilidadTraducida ",
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold));
+                                }).toList(),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(
+                      height: 30,
+                    ),
+
+                    // ESTADISTICAS
+                    const Row(
+                      mainAxisAlignment: MainAxisAlignment
+                          .center, // Alineación horizontal al centro
+                      children: <Widget>[
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 20.0),
+                          child: Text(
+                            'Estadisticas',
+                            style: TextStyle(
+                                fontSize: 20.0, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Column(
+                      children: estadisticas.entries.map((entry) {
+                        String stat = entry.key;
+                        int value = entry.value;
+                        String estadisticaTipo = traducirEstadistica(stat);
+
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 8.0, horizontal: 10.0),
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 70.0,
+                                child: Text(
+                                  estadisticaTipo,
                                   style: const TextStyle(
                                       fontWeight: FontWeight.bold),
                                 ),
-                                trailing: Text('#${index + 1}'),
                               ),
-                              const Divider(height: 1, color: Colors.grey),
+                              const SizedBox(width: 10),
+                              Text(
+                                '$value',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: determineColorBasedOnValue(value)),
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: LinearProgressIndicator(
+                                  value: value / 200,
+                                  backgroundColor: Colors.grey,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    determineColorBasedOnValue(value),
+                                  ),
+                                ),
+                              ),
                             ],
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                )
-              ],
-            ),
-          )),
-    );
+                          ),
+                        );
+                      }).toList(),
+                    ),
+
+                    const SizedBox(
+                      height: 30,
+                    ),
+
+                    const Row(
+                      mainAxisAlignment: MainAxisAlignment
+                          .center, // Alineación horizontal al centro
+                      children: <Widget>[
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 20.0),
+                          child: Text(
+                            'Movimientos',
+                            style: TextStyle(
+                                fontSize: 20.0, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ],
+                    ),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: movimientos.length,
+                      itemBuilder: (context, index) {
+                        return Column(
+                          children: [
+                            ListTile(
+                              title: Text(
+                                movimientos[index],
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              trailing: Text('#${index + 1}'),
+                            ),
+                            const Divider(height: 1, color: Colors.grey),
+                          ],
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
+        ));
   }
 }
