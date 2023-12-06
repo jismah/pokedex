@@ -367,8 +367,8 @@ class _PokemonViewState extends State<PokemonView> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(50.0),
-                    topRight: Radius.circular(50.0),
+                    topLeft: Radius.circular(100.0),
+                    topRight: Radius.circular(0.0),
                   ),
                   boxShadow: [
                     BoxShadow(
