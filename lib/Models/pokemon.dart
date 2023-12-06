@@ -11,6 +11,7 @@ class Pokemon extends PokemonService {
   late int id;
   String name;
   String url;
+  late bool isFavorit;
   late int baseExperience;
   late int height;
   late int weight;
@@ -44,6 +45,10 @@ class Pokemon extends PokemonService {
 
     if (json['base_experience'] != null) {
       pokemon.baseExperience = json['base_experience'];
+    }
+
+    if (json['favorite'] != null) {
+      pokemon.isFavorit = json['favorite'];
     }
 
     if (json['types'] != null) {
