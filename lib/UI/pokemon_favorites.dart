@@ -188,44 +188,6 @@ class _PokemonFavoritesState extends State<PokemonFavorites> {
               _filterPokemonsByType(newType);
             });
           },
-          //   items: allTypes.map<DropdownMenuItem<String>>((String value) {
-          //     return DropdownMenuItem<String>(
-          //       value: value,
-          //       child: Row(
-          //         children: [
-          //           determinarIconoTipo(value), // Tu primer icono
-          //           const SizedBox(width: 8), // Espacio entre el icono y el texto
-          //           Text(value), // Texto de cada opción
-          //           const Spacer(), // Espacio flexible para empujar el siguiente ícono al extremo derecho
-          //           const Icon(Icons.arrow_drop_down), // Tu segundo icono arrow_drop_down
-          //         ],
-          //       ),
-          //     );
-          //   }).toList(),
-          // ),
-          // Padding(
-          //   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
-          //   child: TextField(
-          //     onChanged: (value) {
-          //       filterSearchResults(value);
-          //     },
-          //     controller: searchController,
-          //     decoration: InputDecoration(
-          //       enabledBorder: OutlineInputBorder(
-          //         borderSide: const BorderSide(color: Colors.black38, width: 1.5),
-          //         borderRadius: BorderRadius.circular(10.0),
-          //       ),
-          //       contentPadding: const EdgeInsets.symmetric(vertical: 15),
-          //       prefixIcon: const Icon(
-          //         Icons.search,
-          //         size: 30.0,
-          //       ),
-          //       border: OutlineInputBorder(
-          //         borderRadius: BorderRadius.circular(10.0),
-          //       ),
-          //       hintText: 'Buscar...',
-          //     ),
-          //   ),
         ),
         Expanded(
           child: Padding(
