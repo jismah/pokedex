@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-
+import 'package:share_plus/share_plus.dart';
 import 'package:pokedex/Models/pokemon.dart';
 import 'package:pokedex/UI/evoluciones.dart';
 import 'package:pokedex/Utils/pokemon-favorites.dart';
 import 'package:pokedex/Utils/pokemon-services.dart';
+import 'package:screenshot/screenshot.dart';
 
 class PokemonView extends StatefulWidget {
   final Pokemon pokemon;
@@ -17,6 +18,8 @@ class PokemonView extends StatefulWidget {
 class _PokemonViewState extends State<PokemonView> {
   final PokemonService pokemonService = PokemonService();
   ListPokemonFavorites pokemonFavorites = ListPokemonFavorites();
+  final ScreenshotController screenshotController = ScreenshotController();
+
   int baseExp = 0;
   int height = 0;
   int weight = 0;
@@ -36,6 +39,7 @@ class _PokemonViewState extends State<PokemonView> {
     isIconChanged = widget.pokemon.isFavorit;
   }
 
+  // CARGA TODOS LOS DATOS DEL POKEMON
   Future<void> loadPokemon() async {
     try {
       await pokemonService.fetchPokemon(widget.pokemon);
@@ -62,10 +66,18 @@ class _PokemonViewState extends State<PokemonView> {
     }
   }
 
+  // CAMBIA DE COLOR EL BG DEPENDIENDO DEL POKEMON
   void refreshBg() {
     setState(() {
       colorBase = colorAux; // Cambiar a otro color
     });
+  }
+
+  // TIRA UN SCREENSHOT DEL POKEMON Y LO COMPARTE
+  Future<void> captureAndShare() async {
+    // Capturar la imagen y guardarla como archivo temporal
+    Share.share(
+        '¡Hola, te comparto mi pokemon ${widget.pokemon.name}, su id es ${widget.pokemon.id} y su imagen es ${widget.pokemon.urlimage}');
   }
 
   // DICCIONARIO DE TRADUCCIONES DE LOS TIPOS
@@ -308,7 +320,7 @@ class _PokemonViewState extends State<PokemonView> {
                 color: determineColorBasedOnBackground(colorBase),
               ),
               onPressed: () {
-                refreshBg();
+                captureAndShare();
               },
             ),
           ],
@@ -361,8 +373,8 @@ class _PokemonViewState extends State<PokemonView> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(50.0),
-                    topRight: Radius.circular(50.0),
+                    topLeft: Radius.circular(100.0),
+                    topRight: Radius.circular(0.0),
                   ),
                   boxShadow: [
                     BoxShadow(
@@ -594,7 +606,7 @@ class _PokemonViewState extends State<PokemonView> {
                               const SizedBox(width: 10),
                               Expanded(
                                 child: LinearProgressIndicator(
-                                  value: value / 200,
+                                  value: value / 250,
                                   backgroundColor: Colors.grey,
                                   valueColor: AlwaysStoppedAnimation<Color>(
                                     determineColorBasedOnValue(value),

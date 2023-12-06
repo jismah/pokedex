@@ -12,7 +12,8 @@ class Favorites extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Favoritos', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25)),
+        title: const Text('Favoritos',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25)),
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
         elevation: 0,
@@ -154,7 +155,8 @@ class _PokemonFavoritesState extends State<PokemonFavorites> {
     };
 
     if (iconosPorTipo.containsKey(tipoEnIngles)) {
-      return Icon(iconosPorTipo[tipoEnIngles], color: obtenerColorPorTipo(tipoEnIngles));
+      return Icon(iconosPorTipo[tipoEnIngles],
+          color: obtenerColorPorTipo(tipoEnIngles));
     }
 
     return const Icon(Icons.arrow_drop_down);
@@ -165,36 +167,46 @@ class _PokemonFavoritesState extends State<PokemonFavorites> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        DropdownButton<String>(
-          value: selectedType,
-          icon: determinarIconoTipo(selectedType),
-          dropdownColor: Colors.white,
-          iconSize: 22,
-          elevation: 16,
-          style: TextStyle(color: Colors.black),
-          underline: Container(
-            height: 2,
-            color: obtenerColorPorTipo(selectedType), // Color de la línea debajo del botón
+        Container(
+          child: Row(
+            children: [
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                  child: DropdownButtonFormField<String>(
+                    value: selectedType,
+                    icon: determinarIconoTipo(selectedType),
+                    dropdownColor: Colors.white,
+                    iconSize: 30,
+                    elevation: 16,
+                    style: TextStyle(color: Colors.black),
+                    items: allTypes.map((String type) {
+                      return DropdownMenuItem<String>(
+                        value: type,
+                        child: Text(type),
+                      );
+                    }).toList(),
+                    onChanged: (newType) {
+                      setState(() {
+                        selectedType = newType!;
+                        _filterPokemonsByType(newType);
+                      });
+                    },
+                  ),
+                ),
+              ),
+            ],
           ),
-          items: allTypes.map((String type) {
-            return DropdownMenuItem<String>(
-              value: type,
-              child: Text(type),
-            );
-          }).toList(),
-          onChanged: (newType) {
-            setState(() {
-              selectedType = newType!;
-              _filterPokemonsByType(newType);
-            });
-          },
         ),
         Expanded(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
             child: GridView.builder(
                 gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent: 200, childAspectRatio: 3 / 4, crossAxisSpacing: 2, mainAxisSpacing: 5),
+                    maxCrossAxisExtent: 200,
+                    childAspectRatio: 3 / 4,
+                    crossAxisSpacing: 2,
+                    mainAxisSpacing: 5),
                 itemCount: pokemonListAll.length,
                 itemBuilder: (BuildContext ctx, index) {
                   final Pokemon pokemon = pokemonListAll[index];
@@ -205,7 +217,8 @@ class _PokemonFavoritesState extends State<PokemonFavorites> {
                         onLongPress: () {
                           showCupertinoModalPopup(
                               context: context,
-                              builder: (BuildContext context) => CupertinoActionSheet(
+                              builder: (BuildContext context) =>
+                                  CupertinoActionSheet(
                                     title: const Text("Opciones"),
                                     actions: [
                                       CupertinoActionSheetAction(
@@ -213,7 +226,8 @@ class _PokemonFavoritesState extends State<PokemonFavorites> {
                                             _removeFavorite(pokemon);
                                             Navigator.pop(context, 'Fav');
                                           },
-                                          child: const Text("Quitar de Favoritos")),
+                                          child: const Text(
+                                              "Quitar de Favoritos")),
                                       CupertinoActionSheetAction(
                                           onPressed: () {
                                             Navigator.pop(context, 'See');
@@ -232,7 +246,8 @@ class _PokemonFavoritesState extends State<PokemonFavorites> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => PokemonView(pokemon: pokemon),
+                              builder: (context) =>
+                                  PokemonView(pokemon: pokemon),
                             ),
                           );
                         },
@@ -258,24 +273,31 @@ class _PokemonFavoritesState extends State<PokemonFavorites> {
                           child: Column(
                             children: [
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.end, // Alinea los elementos a la derecha
+                                mainAxisAlignment: MainAxisAlignment
+                                    .end, // Alinea los elementos a la derecha
                                 children: [
                                   Expanded(
                                     child: Padding(
-                                      padding: const EdgeInsets.only(right: 14.0, top: 10.0),
+                                      padding: const EdgeInsets.only(
+                                          right: 14.0, top: 10.0),
                                       child: Text(
                                         '#${pokemon.id}',
                                         textAlign: TextAlign.right,
-                                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.white),
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14,
+                                            color: Colors.white),
                                       ),
                                     ),
                                   ),
                                 ],
                               ),
                               CachedNetworkImage(
-                                placeholder: (context, url) => const CircularProgressIndicator(),
+                                placeholder: (context, url) =>
+                                    const CircularProgressIndicator(),
                                 imageUrl: pokemon.urlimage,
-                                errorWidget: (context, url, error) => const Icon(Icons.error),
+                                errorWidget: (context, url, error) =>
+                                    const Icon(Icons.error),
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(top: 10.0),
@@ -332,7 +354,10 @@ class _PokemonFavoritesState extends State<PokemonFavorites> {
       filteredPokemons = pokemonFavorites.getPokemonFavorites();
     } else {
       pokemonListAll = pokemonFavorites.getPokemonFavorites();
-      filteredPokemons = pokemonListAll.where((pokemon) => pokemon.types.containsValue(newType.toLowerCase())).toList();
+      filteredPokemons = pokemonListAll
+          .where(
+              (pokemon) => pokemon.types.containsValue(newType.toLowerCase()))
+          .toList();
       print("filteredPokemons: $filteredPokemons");
     }
 

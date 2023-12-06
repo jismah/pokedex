@@ -65,7 +65,15 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.17.2"
-    crypto:
+  cross_file:
+    dependency: transitive
+    description:
+      name: cross_file
+      sha256: "2f9d2cbccb76127ba28528cb3ae2c2326a122446a83de5a056aaa3880d3882c5"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.3.3+7"
+  crypto:
     dependency: transitive
     description:
       name: crypto
